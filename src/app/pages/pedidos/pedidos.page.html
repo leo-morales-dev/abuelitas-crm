@@ -1,0 +1,58 @@
+<div class="container mt-4">
+  <h2>Pedidos</h2>
+
+  <app-pedido-form></app-pedido-form>
+
+  <table class="table table-striped mt-5">
+    <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Fecha/Hora</th>
+        <th>Pizzas</th>
+        <th>Pago</th>
+        <th>Entrega</th>
+        <th>Precio</th>
+        <th>Promoción</th>
+        <th>Beneficio</th>
+        <th>Estado</th>
+        <th>Fecha Cierre</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of pedidos$ | async">
+        <td>{{ getNombreCliente(p.clienteId) }}</td>
+        <td>{{ p.fechaHora | date: 'short' }}</td>
+
+        <!-- Mostrar lista de pizzas -->
+        <td>
+          <ul class="mb-0">
+            <li *ngFor="let pizza of p.pizzas">
+              <strong>{{ pizza.tipo }}</strong>
+              <span *ngIf="pizza.especialidad">({{ pizza.especialidad }})</span><br>
+              <small>Ingredientes: {{ pizza.ingredientes?.join(', ') || 'N/A' }}</small>
+            </li>
+          </ul>
+        </td>
+
+        <td>{{ p.metodoPago }}</td>
+        <td>{{ p.tipoEntrega }}</td>
+        <td>
+          {{ p.precioFinal !== undefined ? ('$' + p.precioFinal.toFixed(2)) : 'S/N/A' }}
+        </td>
+        <td>{{ p.nombrePromocionAplicada || '--' }}</td>
+
+        <!-- Mostrar beneficio según tipo de cliente -->
+        <td>
+          <ng-container [ngSwitch]="getTipoCliente(p.clienteId)">
+            <span *ngSwitchCase="'Premier'">5% descuento</span>
+            <span *ngSwitchCase="'VIP'">10% y envío gratis</span>
+            <span *ngSwitchDefault>-</span>
+          </ng-container>
+        </td>
+
+        <td>{{ p.estado }}</td>
+        <td>{{ p.fechaCierre ? (p.fechaCierre | date: 'short') : '--' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

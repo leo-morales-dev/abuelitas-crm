@@ -1,0 +1,19 @@
+.section-divider {
+    border-top: 2px solid #ddd;
+    margin: 2rem 0;
+  }
+  
+  h4 {
+    font-weight: 600;
+    margin-top: 1.5rem;
+  }
+  
+  .table th,
+  .table td {
+    vertical-align: middle;
+  }
+  
+  .form-check {
+    margin-right: 1rem;
+  }
+  

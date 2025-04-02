@@ -1,0 +1,63 @@
+<div class="container mt-4">
+  <h2>Catálogos</h2>
+
+  <div *ngFor="let c of categorias" class="mb-5">
+    <h4>{{ c.nombre }}</h4>
+
+    <!-- Agregar nuevo -->
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" placeholder="Nuevo ítem"
+             [(ngModel)]="nuevos[c.path].nombre">
+
+      <input *ngIf="c.usaPrecio" type="number" class="form-control"
+             placeholder="Precio" [(ngModel)]="nuevos[c.path].precio">
+
+      <button class="btn btn-primary" type="button" (click)="agregar(c.path)">Agregar</button>
+    </div>
+
+    <!-- Tabla -->
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th *ngIf="c.usaPrecio">Precio</th>
+          <th class="text-end">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of datos[c.path]">
+          <td>
+            <div *ngIf="!editando[c.path][item.id]; else editNombre">
+              {{ item.nombre }}
+            </div>
+            <ng-template #editNombre>
+              <input [(ngModel)]="item.nombre" class="form-control form-control-sm">
+            </ng-template>
+          </td>
+
+          <!-- Precio editable -->
+          <td *ngIf="c.usaPrecio">
+            <div *ngIf="!editando[c.path][item.id]; else editPrecio">
+              {{ item.precio | currency }}
+            </div>
+            <ng-template #editPrecio>
+              <input [(ngModel)]="item.precio" type="number" class="form-control form-control-sm">
+            </ng-template>
+          </td>
+
+          <!-- Acciones -->
+          <td class="text-end">
+            <div *ngIf="!editando[c.path][item.id]; else accionesEdit">
+              <button class="btn btn-sm btn-warning me-1" (click)="editar(c.path, item.id)">Editar</button>
+              <button class="btn btn-sm btn-danger" (click)="eliminar(c.path, item.id)">Eliminar</button>
+            </div>
+            <ng-template #accionesEdit>
+              <button class="btn btn-sm btn-success me-1" (click)="guardar(c.path, item)">Guardar</button>
+              <button class="btn btn-sm btn-secondary" (click)="cancelar(c.path, item.id)">Cancelar</button>
+            </ng-template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

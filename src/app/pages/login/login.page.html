@@ -1,0 +1,28 @@
+<div class="login-container">
+  <div class="login-content shadow">
+    <div class="login-image"></div>
+
+    <div class="login-form-wrapper">
+      <form [formGroup]="form" (ngSubmit)="onLogin()" class="login-form">
+        <h2 class="bienvenida text-center mb-4 fw-bold">Hola que tengas un gran turno!!</h2>
+
+
+        <div class="form-group mb-3">
+          <input class="form-control" formControlName="email" placeholder="Correo">
+          <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="text-danger">
+            Correo inválido
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <input class="form-control" formControlName="password" type="password" placeholder="Contraseña">
+          <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="text-danger">
+            Contraseña requerida
+          </div>
+        </div>
+
+        <button class="btn btn-primary w-100" type="submit" [disabled]="form.invalid">Entrar</button>
+      </form>
+    </div>
+  </div>
+</div>

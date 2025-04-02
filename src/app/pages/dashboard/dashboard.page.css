@@ -1,0 +1,31 @@
+.dashboard-card {
+  transition: 0.3s ease;
+  height: 100%;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+}
+
+.icon-box {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  font-size: 20px;
+}
+
+.chart-small {
+  max-height: 250px;
+}
+
+.card-title {
+  font-size: 1.2rem;
+}
+
+select.form-select.w-auto {
+  min-width: 120px;
+}

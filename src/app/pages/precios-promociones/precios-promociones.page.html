@@ -1,0 +1,137 @@
+<div class="container mt-4">
+    <h2 class="fw-bold mb-4">Precios y Promociones</h2>
+  
+    <!-- ========== FORMULARIO DE PRECIOS ========== -->
+    <h4>Precios por Tamaño</h4>
+    <form (ngSubmit)="guardarPrecio()" [formGroup]="formPrecio" class="row g-2 align-items-end mb-3">
+      <div class="col-md-5">
+        <input type="text" class="form-control" placeholder="Tamaño" formControlName="tamaño">
+      </div>
+      <div class="col-md-4">
+        <input type="number" class="form-control" placeholder="Precio" formControlName="precio">
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-success w-100" type="submit">
+          {{ editandoPrecio ? 'Actualizar' : 'Agregar' }}
+        </button>
+      </div>
+    </form>
+  
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr><th>Tamaño</th><th>Precio</th><th>Acciones</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of precios$ | async">
+          <td>{{ p.tamaño }}</td>
+          <td>${{ p.precio }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-2" (click)="editarPrecio(p)">Editar</button>
+            <button class="btn btn-sm btn-danger" (click)="eliminarPrecio(p.id)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <div class="section-divider"></div>
+  
+    <!-- ========== FORMULARIO DE COMBOS ========== -->
+    <h4>Combos</h4>
+    <form (ngSubmit)="guardarCombo()" [formGroup]="formCombo" class="row g-2 align-items-end mb-3">
+      <div class="col-md-4">
+        <input type="text" class="form-control" placeholder="Nombre del combo" formControlName="nombre">
+      </div>
+      <div class="col-md-3">
+        <input type="number" class="form-control" placeholder="Precio" formControlName="precio">
+      </div>
+      <div class="col-md-5">
+        <input type="text" class="form-control" placeholder="Descripción" formControlName="descripcion">
+      </div>
+      <div class="col-12 col-md-3 mt-2">
+        <button class="btn btn-success w-100" type="submit">
+          {{ editandoCombo ? 'Actualizar' : 'Agregar' }} Combo
+        </button>
+      </div>
+    </form>
+  
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr><th>Nombre</th><th>Precio</th><th>Descripción</th><th>Acciones</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of combos$ | async">
+          <td>{{ c.nombre }}</td>
+          <td>${{ c.precio }}</td>
+          <td>{{ c.descripcion }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-2" (click)="editarCombo(c)">Editar</button>
+            <button class="btn btn-sm btn-danger" (click)="eliminarCombo(c.id)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <div class="section-divider"></div>
+  
+    <!-- ========== FORMULARIO DE PROMOCIONES ========== -->
+    <h4>Promociones</h4>
+    <form [formGroup]="formPromo" (ngSubmit)="guardarPromocion()" class="row g-2 align-items-end mb-3">
+      <div class="col-md-4">
+        <input type="text" class="form-control" placeholder="Nombre de la promoción" formControlName="nombre">
+      </div>
+      <div class="col-md-8">
+        <label class="form-label mb-0">Días:</label>
+        <div class="d-flex flex-wrap">
+          <div *ngFor="let dia of diasSemana" class="form-check me-3">
+            <input class="form-check-input" type="checkbox"
+                   [value]="dia"
+                   (change)="onDiaChange($event)"
+                   [checked]="formPromo.value.dias?.includes(dia)">
+            <label class="form-check-label">{{ dia }}</label>
+          </div>
+        </div>
+      </div>
+  
+      <div class="col-md-3">
+        <input type="number" class="form-control" placeholder="Precio Personal" formControlName="precioPersonal">
+      </div>
+      <div class="col-md-3">
+        <input type="number" class="form-control" placeholder="Precio Mediana" formControlName="precioMediana">
+      </div>
+      <div class="col-md-3">
+        <input type="number" class="form-control" placeholder="Precio Familiar" formControlName="precioFamiliar">
+      </div>
+      <div class="col-md-3">
+        <input type="text" class="form-control" placeholder="Restricciones" formControlName="restricciones">
+      </div>
+  
+      <div class="col-12 col-md-3 mt-2">
+        <button class="btn btn-success w-100" type="submit">
+          {{ editandoPromo ? 'Actualizar' : 'Agregar' }} Promoción
+        </button>
+      </div>
+    </form>
+  
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr><th>Nombre</th><th>Días</th><th>Precios</th><th>Restricciones</th><th>Acciones</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let promo of promociones$ | async">
+          <td>{{ promo.nombre }}</td>
+          <td>{{ promo.dias.join(', ') }}</td>
+          <td>
+            Personal: ${{ promo.precioPersonal }}<br>
+            Mediana: ${{ promo.precioMediana }}<br>
+            Familiar: ${{ promo.precioFamiliar }}
+          </td>
+          <td>{{ promo.restricciones }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-2" (click)="editarPromocion(promo)">Editar</button>
+            <button class="btn btn-sm btn-danger" (click)="eliminarPromocion(promo.id)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

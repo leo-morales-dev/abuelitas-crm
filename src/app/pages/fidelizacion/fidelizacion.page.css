@@ -1,0 +1,13 @@
+table th {
+    background-color: #f8f9fa;
+  }
+  
+  td, th {
+    vertical-align: middle !important;
+  }
+  
+  .btn[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  

@@ -1,0 +1,85 @@
+<div class="container mt-4">
+  <h2>Reportes de Clientes</h2>
+
+  <div class="row mb-4">
+    <!-- Tipo de Cliente -->
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+          <h5 class="card-title">Tipo de Cliente</h5>
+          <canvas baseChart
+            [data]="{
+              labels: tipoClienteLabels,
+              datasets: [{
+                data: tipoClienteData,
+                backgroundColor: tipoClienteColors
+              }]
+            }"
+            chartType="doughnut"
+            [options]="chartOptions">
+          </canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ranking -->
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Ranking de Clientes</h5>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Total Pedidos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of ranking; let i = index">
+                <td>{{ getMedalla(i) || i + 1 }}</td>
+                <td>{{ c.nombre }}</td>
+                <td>
+                  <span class="badge" [ngClass]="getTipoBadge(c.tipoCliente)">
+                    {{ c.tipoCliente }}
+                  </span>
+                </td>
+                <td>{{ c.totalPedidos }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actividad -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Actividad de Clientes</h5>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Total Pedidos</th>
+            <th>Última Compra</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cliente of datos$ | async">
+            <td>{{ cliente.nombre }}</td>
+            <td>{{ cliente.totalPedidos }}</td>
+            <td>{{ cliente.ultimaCompra | date:'short' }}</td>
+            <td>
+              <span [ngClass]="cliente.inactivo ? 'text-danger' : 'text-success'">
+                {{ cliente.inactivo ? 'Inactivo' : 'Activo' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

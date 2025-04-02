@@ -1,0 +1,35 @@
+<div class="container mt-4">
+  <h2>Clientes</h2>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <input type="text" [formControl]="filtro" class="form-control" placeholder="Buscar por nombre o dirección">
+    </div>
+  </div>
+
+  <app-cliente-form [cliente]="clienteEditando"></app-cliente-form>
+
+  <table class="table table-striped mt-5">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Teléfono</th>
+        <th>Correo</th>
+        <th>Dirección</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cliente of clientes$ | async">
+        <td>{{ cliente.nombre }}</td>
+        <td>{{ cliente.telefono }}</td>
+        <td>{{ cliente.correo }}</td>
+        <td>{{ cliente.direccion }}</td>
+        <td>
+          <button class="btn btn-sm btn-warning me-2" (click)="editarCliente(cliente)">Editar</button>
+          <button class="btn btn-sm btn-danger" (click)="eliminarCliente(cliente)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

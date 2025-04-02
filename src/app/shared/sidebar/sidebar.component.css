@@ -1,0 +1,11 @@
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+}
+
+.nav-link.active {
+  background-color: #495057;
+}
