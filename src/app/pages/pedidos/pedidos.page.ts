@@ -16,12 +16,20 @@ export class PedidosPage implements OnInit {
   private pedidoService = inject(PedidoService);
   private clienteService = inject(ClienteService);
 
-  pedidos$!: Observable<any[]>;
+  pedidos: any[] = [];
   clientes: any[] = [];
 
   ngOnInit(): void {
-    this.pedidos$ = this.pedidoService.obtenerPedidos();
-    this.clienteService.obtenerClientes().subscribe(data => this.clientes = data);
+    this.pedidoService.obtenerPedidos().subscribe(pedidos => {
+      // Ordenar del más reciente al más antiguo
+      this.pedidos = pedidos.sort((a, b) =>
+        new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime()
+      );
+    });
+
+    this.clienteService.obtenerClientes().subscribe(data => {
+      this.clientes = data;
+    });
   }
 
   getNombreCliente(clienteId: string): string {

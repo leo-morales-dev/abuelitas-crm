@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CatalogoService } from '../catalogos/catalogo.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Promocion } from '../../models/promocion.model';
 
 @Component({
   selector: 'app-catalogos-page',
@@ -22,8 +23,28 @@ export class CatalogosPage implements OnInit {
   ];
 
   datos: { [key: string]: any[] } = {};
+  tiposEntrega: string[] = [];
+
   nuevos: { [key: string]: any } = {};
   editando: { [path: string]: { [id: string]: boolean } } = {};
+
+  promociones: Promocion[] = [];
+  nuevaPromocion: Promocion = {
+    nombre: '',
+    precio: undefined,
+    fechaInicio: '',
+    fechaFin: '',
+    diasValidos: [],
+    tipoEntrega: '',
+    condiciones: {
+      minimoPizzas: 0,
+      tipoPizzaAplicable: ''
+    }
+  };
+
+  diasSemana: string[] = [
+    'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'
+  ];
 
   ngOnInit(): void {
     for (let c of this.categorias) {
@@ -31,15 +52,27 @@ export class CatalogosPage implements OnInit {
         this.datos[c.path] = lista;
         this.editando[c.path] = {};
       });
-      this.nuevos[c.path] = { nombre: '', precio: null };
+      this.nuevos[c.path] = { nombre: '', precio: undefined };
     }
+
+    this.catalogoService.obtenerLista('tiposPizza').subscribe(lista => {
+      this.datos['tiposPizza'] = lista;
+    });
+
+    this.catalogoService.obtenerLista('tiposEntrega').subscribe(lista => {
+      this.tiposEntrega = lista.map(t => t.nombre);
+    });
+
+    this.catalogoService.obtenerPromociones().subscribe(p => {
+      this.promociones = p;
+    });
   }
 
   agregar(path: string) {
     const nuevo = this.nuevos[path];
     if (nuevo?.nombre?.trim()) {
       this.catalogoService.agregarItem(path, nuevo);
-      this.nuevos[path] = { nombre: '', precio: null };
+      this.nuevos[path] = { nombre: '', precio: undefined };
     }
   }
 
@@ -60,5 +93,41 @@ export class CatalogosPage implements OnInit {
 
   cancelar(path: string, id: string) {
     this.editando[path][id] = false;
+  }
+
+  toggleDia(dia: string) {
+    const index = this.nuevaPromocion.diasValidos.indexOf(dia);
+    if (index >= 0) {
+      this.nuevaPromocion.diasValidos.splice(index, 1);
+    } else {
+      this.nuevaPromocion.diasValidos.push(dia);
+    }
+  }
+
+  async agregarPromocion() {
+    const p = { ...this.nuevaPromocion };
+    p.fechaInicio = new Date(p.fechaInicio).toISOString();
+    p.fechaFin = new Date(p.fechaFin).toISOString();
+    await this.catalogoService.agregarPromocion(p);
+
+    this.nuevaPromocion = {
+      nombre: '',
+      precio: undefined,
+      fechaInicio: '',
+      fechaFin: '',
+      diasValidos: [],
+      tipoEntrega: '',
+      condiciones: {
+        minimoPizzas: 0,
+        tipoPizzaAplicable: ''
+      }
+    };
+  }
+
+  async eliminarPromocion(id?: string) {
+    if (!id) return;
+    if (confirm('¿Eliminar esta promoción?')) {
+      await this.catalogoService.eliminarPromocion(id);
+    }
   }
 }

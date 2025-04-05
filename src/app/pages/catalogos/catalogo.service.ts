@@ -9,6 +9,8 @@ import {
   orderBy
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Promocion } from '../../models/promocion.model'; // asegúrate de tener este modelo creado
 
 @Injectable({ providedIn: 'root' })
 export class CatalogoService {
@@ -33,5 +35,34 @@ export class CatalogoService {
   actualizarItem(path: string, id: string, data: { nombre: string; precio?: number }) {
     const ref = doc(this.firestore, `${path}/${id}`);
     return updateDoc(ref, data);
+  }
+
+  // ✅ Tipos de Cliente como array
+  getTiposCliente(): Observable<string[]> {
+    const ref = collection(this.firestore, 'tiposCliente');
+    return collectionData(ref, { idField: 'id' }).pipe(
+      map((items: any[]) => items.map(item => item.nombre))
+    );
+  }
+
+  // 🔥 Promociones CRUD
+  obtenerPromociones(): Observable<Promocion[]> {
+    const ref = collection(this.firestore, 'promociones');
+    return collectionData(ref, { idField: 'id' }) as Observable<Promocion[]>;
+  }
+
+  agregarPromocion(promo: Promocion) {
+    const ref = collection(this.firestore, 'promociones');
+    return addDoc(ref, promo);
+  }
+
+  actualizarPromocion(id: string, data: Partial<Promocion>) {
+    const ref = doc(this.firestore, `promociones/${id}`);
+    return updateDoc(ref, data);
+  }
+
+  eliminarPromocion(id: string) {
+    const ref = doc(this.firestore, `promociones/${id}`);
+    return deleteDoc(ref);
   }
 }

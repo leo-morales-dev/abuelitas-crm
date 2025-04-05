@@ -16,6 +16,8 @@ import { PedidoService } from '../pedidos/pedido.service';
 import { ClienteService } from '../clientes/cliente.service';
 import { CatalogoService } from '../catalogos/catalogo.service';
 import { Pedido } from '../../models/pedido.model';
+import { Promocion } from '../../models/promocion.model';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-pedido-form',
@@ -25,6 +27,7 @@ import { Pedido } from '../../models/pedido.model';
 })
 export class PedidoFormComponent implements OnInit {
   form!: FormGroup;
+  fb = inject(FormBuilder);
   pedidoService = inject(PedidoService);
   clienteService = inject(ClienteService);
   catalogoService = inject(CatalogoService);
@@ -36,12 +39,12 @@ export class PedidoFormComponent implements OnInit {
   metodosPago: string[] = [];
   tiposEntrega: string[] = [];
   preciosCatalogo: Record<string, number> = {};
-  tipoClienteActual: string = 'Tradicional';
+  promociones: Promocion[] = [];
 
-  nombrePromocionAplicada = '';
-  fb = inject(FormBuilder);
+  tipoClienteActual = 'Tradicional';
+  promoAplicada: string = '';
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.form = this.fb.group({
       clienteId: ['', Validators.required],
       fechaHora: [this.getFechaActual(), Validators.required],
@@ -49,7 +52,7 @@ export class PedidoFormComponent implements OnInit {
       metodoPago: ['', Validators.required],
       tipoEntrega: ['', Validators.required],
       precioFinal: [0],
-      nombrePromocionAplicada: [''],
+      promoAplicada: [''],
       estado: ['En progreso', Validators.required],
       fechaCierre: ['']
     });
@@ -82,6 +85,11 @@ export class PedidoFormComponent implements OnInit {
       this.tiposEntrega = lista.map(e => e.nombre);
     });
 
+    this.catalogoService.obtenerPromociones().subscribe(promos => {
+      this.promociones = promos;
+      this.recalcularPrecio();
+    });
+
     this.form.get('clienteId')?.valueChanges.subscribe(clienteId => {
       this.clienteService.obtenerClientes().subscribe(clientes => {
         const cliente = clientes.find(c => c.id === clienteId);
@@ -91,6 +99,7 @@ export class PedidoFormComponent implements OnInit {
     });
 
     this.pizzasArray.valueChanges.subscribe(() => this.recalcularPrecio());
+    this.form.get('tipoEntrega')?.valueChanges.subscribe(() => this.recalcularPrecio());
   }
 
   get pizzasArray(): FormArray {
@@ -121,15 +130,72 @@ export class PedidoFormComponent implements OnInit {
   }
 
   recalcularPrecio() {
-    if (!this.preciosCatalogo || !this.pizzasArray) return;
+    if (!this.pizzasArray || this.pizzasArray.length === 0) return;
+    const pizzas = this.pizzasArray.getRawValue();
+    if (pizzas.some(p => !p.tipo)) return;
+
+    const hoy = new Date();
+    const dia = hoy.toLocaleDateString('es-MX', { weekday: 'long' }).toLowerCase();
+
+    // Verificamos si hay promoción aplicable
+    const tipoEntregaSeleccionado = this.form.get('tipoEntrega')?.value;
+
+    const promoActiva = this.promociones.find(promo => {
+      const desde = new Date(promo.fechaInicio);
+      const hasta = new Date(promo.fechaFin);
+      const cumpleDia = promo.diasValidos?.includes(dia);
+      const cumpleCantidad = promo.condiciones?.minimoPizzas
+        ? pizzas.length >= promo.condiciones.minimoPizzas
+        : true;
+      const cumpleTipoPizza = promo.condiciones?.tipoPizzaAplicable
+        ? pizzas.every(p => p.tipo === promo.condiciones.tipoPizzaAplicable)
+        : true;
+      const cumpleEntrega = promo.tipoEntrega
+        ? promo.tipoEntrega === tipoEntregaSeleccionado
+        : true;
+
+      return (
+        desde <= hoy &&
+        hoy <= hasta &&
+        cumpleDia &&
+        cumpleCantidad &&
+        cumpleTipoPizza &&
+        cumpleEntrega
+      );
+    });
+
 
     let total = 0;
-    const pizzas = this.pizzasArray.getRawValue();
-    for (const p of pizzas) {
-      const precio = this.preciosCatalogo[p.tipo] || 0;
-      total += precio;
+    this.promoAplicada = '';
+
+    if (promoActiva && promoActiva.condiciones?.tipoPizzaAplicable && promoActiva.precio) {
+      const tipoPromo = promoActiva.condiciones.tipoPizzaAplicable;
+      const minPizzas = promoActiva.condiciones.minimoPizzas || 0;
+
+      const pizzasPromo = pizzas.filter(p => p.tipo === tipoPromo);
+      const pizzasNoPromo = pizzas.filter(p => p.tipo !== tipoPromo);
+
+      const grupos = Math.floor(pizzasPromo.length / minPizzas);
+      const resto = pizzasPromo.length % minPizzas;
+
+      total += grupos * promoActiva.precio;
+
+      for (let i = 0; i < resto; i++) {
+        total += this.preciosCatalogo[tipoPromo] || 0;
+      }
+
+      for (const p of pizzasNoPromo) {
+        total += this.preciosCatalogo[p.tipo] || 0;
+      }
+
+      this.promoAplicada = grupos > 0 ? promoActiva.nombre : '';
+    } else {
+      for (const p of pizzas) {
+        total += this.preciosCatalogo[p.tipo] || 0;
+      }
     }
 
+    // Descuento por tipo de cliente
     if (this.tipoClienteActual === 'Premier') {
       total *= 0.95;
     } else if (this.tipoClienteActual === 'VIP') {
@@ -137,20 +203,7 @@ export class PedidoFormComponent implements OnInit {
     }
 
     total = parseFloat(total.toFixed(2));
-    this.form.get('precioFinal')?.setValue(total, { emitEvent: false });
-
-    // Promociones por monto total
-    if (total >= 725) {
-      this.nombrePromocionAplicada = 'Combo Empresarial';
-    } else if (total >= 485) {
-      this.nombrePromocionAplicada = 'Combo Fiesta';
-    } else if (total >= 370) {
-      this.nombrePromocionAplicada = 'Combo Familiar';
-    } else if (total >= 200) {
-      this.nombrePromocionAplicada = 'Promo Abuelita';
-    } else {
-      this.nombrePromocionAplicada = '';
-    }
+    this.form.patchValue({ precioFinal: total, promoAplicada: this.promoAplicada }, { emitEvent: false });
   }
 
   async guardarPedido() {
@@ -158,17 +211,15 @@ export class PedidoFormComponent implements OnInit {
     if (!clienteId || this.pizzasArray.length === 0) return;
 
     const pedido: Pedido = this.form.getRawValue();
-    pedido.nombrePromocionAplicada = this.nombrePromocionAplicada;
-    pedido.precioFinal = this.form.get('precioFinal')?.value;
 
-    await this.pedidoService.agregarPedido(pedido);
-    await this.clienteService.agregarPuntos(clienteId, this.calcularPuntos(pedido.precioFinal, this.nombrePromocionAplicada, pedido.fechaHora));
+    await this.pedidoService.crearPedido(pedido);
+    await this.clienteService.agregarPuntos(clienteId, this.calcularPuntos(pedido.precioFinal, this.promoAplicada, pedido.fechaHora));
 
     this.form.reset();
     this.pizzasArray.clear();
     this.pizzasArray.push(this.crearPizzaGroup());
     this.form.patchValue({ fechaHora: this.getFechaActual(), estado: 'En progreso' });
-    this.nombrePromocionAplicada = '';
+    this.promoAplicada = '';
   }
 
   calcularPuntos(monto: number, promo: string, fecha: string): number {

@@ -2,7 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ClienteService } from '../clientes/cliente.service';
 import { PedidoService } from '../pedidos/pedido.service';
-import { combineLatest, Observable } from 'rxjs';
+import { CatalogoService } from '../catalogos/catalogo.service';
+import { combineLatest, Observable, firstValueFrom } from 'rxjs';
 import { NgFor, AsyncPipe } from '@angular/common';
 import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
@@ -17,13 +18,14 @@ import { ChartConfiguration } from 'chart.js';
 export class ReportesPage implements OnInit {
   private clienteService = inject(ClienteService);
   private pedidoService = inject(PedidoService);
+  private catalogoService = inject(CatalogoService);
 
   datos$!: Observable<any[]>;
   ranking: { nombre: string; tipoCliente: string; totalPedidos: number }[] = [];
 
   tipoClienteLabels: string[] = [];
   tipoClienteData: number[] = [];
-  tipoClienteColors: string[] = ['#007bff', '#ffc107', '#28a745']; // Azul, Dorado, Verde
+  tipoClienteColors: string[] = ['#007bff', '#ffc107', '#28a745', '#6c757d', '#6610f2'];
 
   chartOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
@@ -35,41 +37,43 @@ export class ReportesPage implements OnInit {
     }
   };
 
-  ngOnInit(): void {
-    combineLatest([
-      this.clienteService.obtenerClientes(),
-      this.pedidoService.obtenerPedidos()
-    ]).subscribe(([clientes, pedidos]) => {
-      // Datos para tabla de actividad
-      this.datos$ = new Observable(observer => {
-        observer.next(clientes.map(c => {
-          const pedidosCliente = pedidos.filter(p => p.clienteId === c.id);
-          return {
-            ...c,
-            totalPedidos: pedidosCliente.length,
-            ultimaCompra: pedidosCliente.at(-1)?.fechaHora,
-            inactivo: this.estaInactivo(pedidosCliente.at(-1)?.fechaHora)
-          };
-        }));
-      });
+  async ngOnInit(): Promise<void> {
+    const [clientes, pedidos, tiposCatalogo] = await Promise.all([
+      firstValueFrom(this.clienteService.obtenerClientes()),
+      firstValueFrom(this.pedidoService.obtenerPedidos()),
+      firstValueFrom(this.catalogoService.getTiposCliente())
+    ]);
 
-      // Ranking de clientes
-      this.ranking = clientes.map(c => {
+    const todosTipos = [...tiposCatalogo, 'No Aplica'];
+
+    // Actividad
+    this.datos$ = new Observable(observer => {
+      observer.next(clientes.map(c => {
         const pedidosCliente = pedidos.filter(p => p.clienteId === c.id);
         return {
-          nombre: c.nombre,
-          tipoCliente: c.tipoCliente || 'No Aplica',
-          totalPedidos: pedidosCliente.length
+          ...c,
+          totalPedidos: pedidosCliente.length,
+          ultimaCompra: pedidosCliente.at(-1)?.fechaHora,
+          inactivo: this.estaInactivo(pedidosCliente.at(-1)?.fechaHora)
         };
-      }).sort((a, b) => b.totalPedidos - a.totalPedidos);
-
-      // Gráfico tipo de cliente
-      const tipos = ['Tradicional', 'Premier', 'VIP', 'No Aplica'];
-        this.tipoClienteLabels = tipos;
-        this.tipoClienteData = tipos.map(t =>
-          clientes.filter(c => (c.tipoCliente || 'No Aplica') === t).length
-        );
+      }));
     });
+
+    // Ranking
+    this.ranking = clientes.map(c => {
+      const pedidosCliente = pedidos.filter(p => p.clienteId === c.id);
+      return {
+        nombre: c.nombre,
+        tipoCliente: c.tipoCliente || 'No Aplica',
+        totalPedidos: pedidosCliente.length
+      };
+    }).sort((a, b) => b.totalPedidos - a.totalPedidos);
+
+    // Gráfico: tipos desde catálogo
+    this.tipoClienteLabels = todosTipos;
+    this.tipoClienteData = todosTipos.map(tipo =>
+      clientes.filter(c => (c.tipoCliente || 'No Aplica') === tipo).length
+    );
   }
 
   estaInactivo(fecha: string | undefined): boolean {

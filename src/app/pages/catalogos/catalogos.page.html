@@ -35,7 +35,6 @@
             </ng-template>
           </td>
 
-          <!-- Precio editable -->
           <td *ngIf="c.usaPrecio">
             <div *ngIf="!editando[c.path][item.id]; else editPrecio">
               {{ item.precio | currency }}
@@ -45,7 +44,6 @@
             </ng-template>
           </td>
 
-          <!-- Acciones -->
           <td class="text-end">
             <div *ngIf="!editando[c.path][item.id]; else accionesEdit">
               <button class="btn btn-sm btn-warning me-1" (click)="editar(c.path, item.id)">Editar</button>
@@ -55,6 +53,96 @@
               <button class="btn btn-sm btn-success me-1" (click)="guardar(c.path, item)">Guardar</button>
               <button class="btn btn-sm btn-secondary" (click)="cancelar(c.path, item.id)">Cancelar</button>
             </ng-template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Sección especial para promociones -->
+  <div class="mb-5">
+    <h4>Promociones</h4>
+
+    <!-- Agregar promoción -->
+    <div class="card p-3 mb-4 bg-light">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-3">
+          <input class="form-control" placeholder="Nombre promoción" [(ngModel)]="nuevaPromocion.nombre">
+        </div>
+
+        <div class="col-md-2">
+          <input class="form-control" type="number" placeholder="Precio fijo" [(ngModel)]="nuevaPromocion.precio">
+        </div>
+
+        <div class="col-md-2">
+          <input type="date" class="form-control" [(ngModel)]="nuevaPromocion.fechaInicio">
+        </div>
+
+        <div class="col-md-2">
+          <input type="date" class="form-control" [(ngModel)]="nuevaPromocion.fechaFin">
+        </div>
+
+        <div class="col-md-1">
+          <input type="number" class="form-control" placeholder="Mín. pizzas" [(ngModel)]="nuevaPromocion.condiciones.minimoPizzas">
+        </div>
+
+        <div class="col-md-2">
+          <select class="form-select" [(ngModel)]="nuevaPromocion.condiciones.tipoPizzaAplicable">
+            <option value="">Tipo de pizza</option>
+            <option *ngFor="let tipo of datos['tiposPizza']" [value]="tipo.nombre">{{ tipo.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <select class="form-select" [(ngModel)]="nuevaPromocion.tipoEntrega">
+            <option value="">Tipo de entrega</option>
+            <option *ngFor="let tipo of datos['tiposEntrega']" [value]="tipo.nombre">{{ tipo.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label mb-1 mt-2">Días válidos</label>
+          <div class="form-check form-check-inline" *ngFor="let dia of diasSemana">
+            <input type="checkbox" class="form-check-input"
+                   [checked]="nuevaPromocion.diasValidos.includes(dia)"
+                   (change)="toggleDia(dia)">
+            <label class="form-check-label">{{ dia }}</label>
+          </div>
+        </div>
+
+        <div class="col-12 text-end">
+          <button class="btn btn-primary mt-2" (click)="agregarPromocion()">Agregar Promoción</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de promociones -->
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Inicio</th>
+          <th>Fin</th>
+          <th>Días</th>
+          <th>Tipo Entrega</th>
+          <th>Mín. Pizzas</th>
+          <th>Tipo Pizza</th>
+          <th class="text-end">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let promo of promociones">
+          <td>{{ promo.nombre }}</td>
+          <td>{{ promo.precio | currency }}</td>
+          <td>{{ promo.fechaInicio | date }}</td>
+          <td>{{ promo.fechaFin | date }}</td>
+          <td>{{ promo.diasValidos.join(', ') }}</td>
+          <td>{{ promo.tipoEntrega || '-' }}</td>
+          <td>{{ promo.condiciones.minimoPizzas || '-' }}</td>
+          <td>{{ promo.condiciones.tipoPizzaAplicable || '-' }}</td>
+          <td class="text-end">
+            <button class="btn btn-sm btn-danger" (click)="eliminarPromocion(promo.id)">Eliminar</button>
           </td>
         </tr>
       </tbody>

@@ -13,12 +13,12 @@
       <input class="form-control" type="datetime-local" formControlName="fechaHora">
     </div>
 
-    <!-- PIZZAS DINÁMICAS -->
+    <!-- PIZZAS -->
     <div formArrayName="pizzas" class="col-12">
       <div *ngFor="let pizza of pizzasArray.controls; let i = index" [formGroupName]="i" class="border p-3 mb-3 rounded bg-light">
         <h6>Pizza #{{ i + 1 }}</h6>
         <div class="row g-2">
-          <!-- Tipo de pizza -->
+          <!-- Tipo -->
           <div class="col-md-4">
             <div class="input-group">
               <select class="form-select" formControlName="tipo">
@@ -37,7 +37,7 @@
               </select>
               <button class="btn btn-outline-secondary" type="button" (click)="agregarIngrediente()">+</button>
             </div>
-            <div class="form-text">Ctrl o Cmd para selección múltiple</div>
+            <div class="form-text">Ctrl/Cmd para seleccionar varios</div>
           </div>
 
           <!-- Especialidad -->
@@ -51,12 +51,13 @@
             </div>
           </div>
 
-          <!-- Botón eliminar -->
+          <!-- Eliminar -->
           <div class="col-md-1 d-flex align-items-center">
             <button class="btn btn-danger btn-sm" type="button" (click)="eliminarPizza(i)" *ngIf="pizzasArray.length > 1">X</button>
           </div>
         </div>
       </div>
+
       <button class="btn btn-outline-primary btn-sm mt-2" type="button" (click)="agregarPizza()">+ Pizza</button>
     </div>
 
@@ -83,26 +84,26 @@
     </div>
 
     <!-- Precio final y promoción -->
-<div class="col-md-6">
-  <label class="form-label">Precio Final</label>
-  <div class="form-control bg-light">
-    {{ form.get('precioFinal')?.value || 0 | currency: 'MXN':'symbol':'1.2-2' }}
-  </div>
-  <div class="form-text text-success" *ngIf="nombrePromocionAplicada">
-    Promoción sugerida: <strong>{{ nombrePromocionAplicada }}</strong>
-  </div>
-</div>
+    <div class="col-md-6">
+      <label class="form-label">Precio Final</label>
+      <div class="form-control bg-light">
+        {{ form.get('precioFinal')?.value || 0 | currency: 'MXN':'symbol':'1.2-2' }}
+      </div>
+      <div class="form-text text-success" *ngIf="promoAplicada">
+        Promoción aplicada: <strong>{{ promoAplicada }}</strong>
+      </div>
+    </div>
 
     <!-- Estado -->
     <div class="col-md-6">
-      <label class="form-label">Estado del Pedido</label>
+      <label class="form-label">Estado</label>
       <select class="form-select" formControlName="estado">
         <option value="En progreso">En progreso</option>
         <option value="Finalizado">Finalizado</option>
       </select>
     </div>
 
-    <!-- Fecha de cierre -->
+    <!-- Fecha cierre -->
     <div class="col-md-6">
       <label class="form-label">Fecha de Cierre</label>
       <input type="datetime-local" class="form-control" formControlName="fechaCierre">

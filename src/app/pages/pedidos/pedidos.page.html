@@ -19,11 +19,10 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let p of pedidos$ | async">
+      <tr *ngFor="let p of pedidos">
         <td>{{ getNombreCliente(p.clienteId) }}</td>
         <td>{{ p.fechaHora | date: 'short' }}</td>
 
-        <!-- Mostrar lista de pizzas -->
         <td>
           <ul class="mb-0">
             <li *ngFor="let pizza of p.pizzas">
@@ -39,9 +38,8 @@
         <td>
           {{ p.precioFinal !== undefined ? ('$' + p.precioFinal.toFixed(2)) : 'S/N/A' }}
         </td>
-        <td>{{ p.nombrePromocionAplicada || '--' }}</td>
+        <td>{{ p.promoAplicada || '--' }}</td>
 
-        <!-- Mostrar beneficio según tipo de cliente -->
         <td>
           <ng-container [ngSwitch]="getTipoCliente(p.clienteId)">
             <span *ngSwitchCase="'Premier'">5% descuento</span>
