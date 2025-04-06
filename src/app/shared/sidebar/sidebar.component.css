@@ -1,11 +1,155 @@
+/* --- BASE: CONTENEDORES --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+}
+
 .sidebar {
   width: 250px;
   height: 100vh;
-  position: sticky;
+  position: fixed;
   top: 0;
-  overflow-y: auto;
+  left: 0;
+  background-color: #0065bc;
+  z-index: 1000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
 }
 
+.sidebar.collapsed {
+  width: 80px;
+}
+
+/* --- LOGO --- */
+.logo-sidebar {
+  width: 120px;
+  height: auto;
+  margin-top: 20px;
+  transition: transform 0.3s ease;
+}
+.sidebar.collapsed .logo-sidebar {
+  width: 45px;
+  transform: scale(0.95);
+}
+
+/* --- TÍTULO --- */
+.sidebar h5 {
+  margin-top: 10px;
+  margin-bottom: 30px;
+  color: white;
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
+}
+.sidebar.collapsed h5 {
+  opacity: 0;
+}
+
+/* --- MENÚ --- */
+.nav {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+.nav-item {
+  width: 100%;
+}
+
+/* --- ENLACES EXPANDIDOS --- */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  color: white;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* ÍCONO NORMAL */
+.nav-link i {
+  font-size: 1.2rem;
+  color: white;
+  transition: color 0.3s ease;
+}
+
+/* TEXTO NORMAL */
+.nav-link span {
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+/* ACTIVO */
+.nav-link.active i {
+  color: #dd1a1e !important;
+}
 .nav-link.active {
-  background-color: #495057;
+  background-color: transparent !important;
+  color: #dd1a1e !important;
+}
+
+/* HOVER: opcional, puede ser eliminado */
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* --- MODO CONTRAÍDO --- */
+.sidebar.collapsed .nav-link {
+  justify-content: center;
+  flex-direction: column;
+  padding: 12px 0;
+  gap: 4px;
+}
+.sidebar.collapsed .nav-link span {
+  display: none;
+}
+
+/* --- BOTÓN SALIR --- */
+.btn-salir {
+  background-color: #dd1a1e;
+  border-color: #dd1a1e;
+  color: white;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  height: 38px;
+  width: 90%;
+  margin: 20px auto;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+}
+.btn-salir:hover {
+  background-color: #d51317;
+  border-color: #d51317;
+  color: white;
+}
+
+/* BOTÓN EN MODO CONTRAÍDO */
+.sidebar.collapsed .btn-salir {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+}
+.sidebar.collapsed .btn-salir span {
+  display: none;
+}
+
+/* --- CONTENIDO AJUSTABLE --- */
+.content-container {
+  margin-left: 250px;
+  transition: margin-left 0.3s ease, width 0.3s ease;
+  width: calc(100% - 250px);
+  padding: 1rem;
+}
+.sidebar.collapsed + .content-container {
+  margin-left: 80px;
+  width: calc(100% - 80px);
 }

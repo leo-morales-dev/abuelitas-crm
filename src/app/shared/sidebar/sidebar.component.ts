@@ -15,6 +15,16 @@ export class SidebarComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
 
+  isCollapsed = true;
+
+  expandSidebar() {
+    this.isCollapsed = false;
+  }
+
+  collapseSidebar() {
+    this.isCollapsed = true;
+  }
+
   logout() {
     this.auth.logout().then(() => this.router.navigate(['/login']));
   }
