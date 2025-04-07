@@ -37,7 +37,7 @@
     <!-- SEXO -->
     <div class="col-md-6">
       <select class="form-select" formControlName="sexo">
-        <option value="">Sexo</option>
+        <option value="" disabled selected hidden>Sexo</option>
         <option value="F">Femenino</option>
         <option value="M">Masculino</option>
       </select>
@@ -51,7 +51,7 @@
     <!-- ENTREGA -->
     <div class="col-md-6">
       <select class="form-select" formControlName="preferenciasEntrega">
-        <option value="">Preferencias de entrega</option>
+        <option value="" disabled selected hidden>Preferencias de entrega</option>
         <option *ngFor="let tipo of preferenciasEntrega" [value]="tipo">{{ tipo }}</option>
       </select>
     </div>
@@ -59,7 +59,7 @@
     <!-- PAGO -->
     <div class="col-md-6">
       <select class="form-select" formControlName="metodosPago">
-        <option value="">Método de pago</option>
+        <option value="" disabled selected hidden>Método de pago</option>
         <option *ngFor="let metodo of metodosPago" [value]="metodo">{{ metodo }}</option>
       </select>
     </div>
@@ -77,17 +77,17 @@
     <!-- SELECT tipo cliente -->
     <div class="col-md-6">
       <select class="form-select" formControlName="tipoCliente" [disabled]="!tipoClienteActivo">
-        <option value="">Seleccione tipo de cliente</option>
+        <option value="" disabled selected hidden>Seleccione tipo de cliente</option>
         <option *ngFor="let tipo of tiposCliente" [value]="tipo">{{ tipo }}</option>
       </select>
     </div>
 
     <!-- BOTÓN GUARDAR -->
     <div class="text-end mt-3">
-      <button class="btn btn-success" type="submit" [disabled]="form.invalid">
+      <button class="btn btn-rojo" type="submit" [disabled]="form.invalid">
         {{ cliente?.id ? 'Actualizar' : 'Guardar' }} Cliente
       </button>
     </div>
-  </div> <!-- cierre del row -->
 
+  </div>
 </form>

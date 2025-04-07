@@ -1,15 +1,38 @@
 <div class="container mt-4">
-  <h2>Clientes</h2>
-
-  <div class="row mb-4">
-    <div class="col-md-6">
-      <input type="text" [formControl]="filtro" class="form-control" placeholder="Buscar por nombre o dirección">
-    </div>
-  </div>
-
+  <h2 class="fw-bold" #registro>Clientes</h2>
+  <h5 class="text-muted mb-3">Registro</h5>
+  
+  <!-- FORMULARIO -->
   <app-cliente-form [cliente]="clienteEditando"></app-cliente-form>
 
-  <table class="table table-striped mt-5">
+  <!-- FILTROS -->
+  <h5 class="fw-bold mt-5">Filtro de Búsqueda Cliente</h5>
+
+  <div class="filtros-clientes mt-3 mb-4">
+    <input type="text" [formControl]="filtro" class="form-control form-control-sm" placeholder="Buscar por nombre o dirección">
+
+    <select class="form-select form-select-sm w-auto" [(ngModel)]="filtroSexo">
+      <option value="">Sexo</option>
+      <option value="F">Femenino</option>
+      <option value="M">Masculino</option>
+    </select>
+
+    <select class="form-select form-select-sm w-auto" [(ngModel)]="filtroEntrega">
+      <option value="">Preferencia de entrega</option>
+      <option *ngFor="let pref of preferenciasEntrega" [value]="pref">{{ pref }}</option>
+    </select>
+
+    <button class="btn btn-sm btn-filtrar d-flex align-items-center" (click)="aplicarFiltros()">
+      <i class="bi bi-funnel-fill me-1"></i> Filtrar
+    </button>
+
+    <button class="btn btn-sm btn-reiniciar d-flex align-items-center" (click)="resetFiltros()">
+      <i class="bi bi-arrow-clockwise me-1"></i> Reiniciar
+    </button>
+  </div>
+
+  <!-- TABLA MODERNA -->
+  <table class="table table-hover modern-table mt-4">
     <thead>
       <tr>
         <th>Nombre</th>
@@ -18,8 +41,8 @@
         <th>Dirección</th>
         <th>Fecha de nacimiento</th>
         <th>Sexo</th>
-        <th>Preferencia de entrega</th>
-        <th>Acciones</th>
+        <th>Preferencia</th>
+        <th class="text-center">Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -31,9 +54,13 @@
         <td>{{ cliente.cumple ? (cliente.cumple | date: 'shortDate') : 'No aplica' }}</td>
         <td>{{ cliente.sexo || 'N/A' }}</td>
         <td>{{ cliente.preferenciasEntrega || 'N/A' }}</td>
-        <td>
-          <button class="btn btn-sm btn-warning me-2" (click)="editarCliente(cliente)">Editar</button>
-          <button class="btn btn-sm btn-danger" (click)="eliminarCliente(cliente)">Eliminar</button>
+        <td class="text-center">
+          <button class="btn-icon btn-azul me-2" (click)="editarCliente(cliente)">
+            <i class="bi bi-pencil-fill"></i>
+          </button>
+          <button class="btn-icon btn-rojo" (click)="eliminarCliente(cliente)">
+            <i class="bi bi-trash-fill"></i>
+          </button>
         </td>
       </tr>
     </tbody>

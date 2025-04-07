@@ -1,0 +1,96 @@
+/* Layout filtros */
+.filtros-clientes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .filtros-clientes select,
+  .filtros-clientes input {
+    min-width: 200px;
+    max-width: 250px;
+  }
+  
+  /* Botón Filtrar */
+  .btn-filtrar {
+    background-color: #dd1a1e;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .btn-filtrar:hover {
+    background-color: #c4171a;
+  }
+  
+  /* Botón Reiniciar */
+  .btn-reiniciar {
+    background-color: #ffcc00;
+    color: black;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .btn-reiniciar:hover {
+    background-color: #e6b800;
+  }
+  
+  /* Tabla moderna */
+  .modern-table th {
+    background-color: #f4f4f4;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  
+  .modern-table td {
+    vertical-align: middle;
+    font-size: 0.92rem;
+    padding: 12px 10px;
+  }
+  
+  .modern-table tr:hover {
+    background-color: #f9f9f9;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  /* Botón estilo ícono */
+  .btn-icon {
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .btn-icon i {
+    font-size: 1rem;
+  }
+  
+  /* Azul */
+  .btn-azul {
+    background-color: #0065bc;
+    color: white;
+  }
+  
+  .btn-azul:hover {
+    background-color: #0051a3;
+  }
+  
+  /* Rojo */
+  .btn-rojo {
+    background-color: #dd1a1e;
+    color: white;
+  }
+  
+  .btn-rojo:hover {
+    background-color: #c4171a;
+  }
+  

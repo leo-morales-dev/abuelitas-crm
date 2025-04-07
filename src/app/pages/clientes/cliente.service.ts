@@ -29,7 +29,6 @@ export class ClienteService {
       puntos: 100
     };
 
-    // Agregar solo si están definidos
     if (cliente.ultimaCompra !== undefined) {
       clienteConBienvenida.ultimaCompra = cliente.ultimaCompra;
     }
@@ -43,15 +42,11 @@ export class ClienteService {
 
   actualizarCliente(id: string, data: Partial<Cliente>) {
     const ref = doc(this.firestore, `clientes/${id}`);
-  
-    // Eliminar campos con undefined
     const cleanData = Object.fromEntries(
       Object.entries(data).filter(([_, v]) => v !== undefined)
     );
-  
     return updateDoc(ref, cleanData);
   }
-  
 
   eliminarCliente(id: string) {
     const ref = doc(this.firestore, `clientes/${id}`);
@@ -70,5 +65,13 @@ export class ClienteService {
         ultimaCompra: new Date().toISOString()
       });
     }
+  }
+
+  /**
+   * ✅ Nueva función para obtener preferencias de entrega desde catálogo
+   */
+  obtenerPreferenciasEntrega(): Observable<any[]> {
+    const ref = collection(this.firestore, 'catalogos/tiposEntrega/items');
+    return collectionData(ref);
   }
 }

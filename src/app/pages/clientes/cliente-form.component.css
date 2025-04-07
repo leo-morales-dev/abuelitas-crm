@@ -1,0 +1,44 @@
+.btn-rojo {
+  background-color: #0065bc;
+  color: #fff;
+  border: none;
+  padding: 6px 16px;
+  font-weight: 500;
+  border-radius: 4px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.btn-rojo:hover {
+  background-color: #1e73be;
+}
+
+/* Seleccionar hacia abajo */
+select {
+  position: relative;
+  z-index: 1;
+  scrollbar-color: #0065bc #f1f1f1; /* Azul y fondo claro */
+  scrollbar-width: thin;
+}
+
+/* Estilo para scroll tipo WebKit (Chrome, Edge, Safari) */
+select::-webkit-scrollbar {
+  width: 6px;
+}
+
+select::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+select::-webkit-scrollbar-thumb {
+  background-color: #0065bc;
+  border-radius: 6px;
+}
+
+select:focus {
+  overflow: visible !important;
+}
+
+/* placeholder style for first option */
+select option[disabled][hidden] {
+  color: #aaa;
+}

@@ -20,9 +20,11 @@ import { NgIf, NgFor } from '@angular/common';
 @Component({
   selector: 'app-cliente-form',
   templateUrl: './cliente-form.component.html',
+  styleUrls: ['./cliente-form.component.css'],  // ✅ Agrega esta línea
   standalone: true,
   imports: [ReactiveFormsModule, NgIf, NgFor],
 })
+
 export class ClienteFormComponent implements OnInit, OnChanges {
   @Input() cliente?: Cliente;
 
