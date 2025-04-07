@@ -42,15 +42,12 @@ export const appRoutes: Routes = [
         path: 'catalogos',
         loadChildren: () =>
           import('./pages/catalogos/catalogos.routes').then(m => m.CATALOGOS_ROUTES),
-      },
-      {
-        path: '**', // 👈 Redirige cualquier ruta inválida dentro del layout
-        redirectTo: '',
       }
     ]
   },
+  // Ruta global por si nada coincide → ir a login o página 404 personalizada
   {
-    path: '**', // 👈 Ruta global inválida fuera del layout (por ejemplo /xxx sin login)
+    path: '**',
     redirectTo: 'login',
   }
 ];
