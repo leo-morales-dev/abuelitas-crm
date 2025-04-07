@@ -35,3 +35,17 @@
   background-color: #0065bc;
   color: white;
 }
+
+.text-success {
+  color: #0065bc !important;
+}
+
+.btn-outline-primary[_ngcontent-ng-c2077726309] {
+  background-color: #0065bc;
+  color: white;
+}
+
+.btn-outline-primary[_ngcontent-ng-c2077726309]:hover {
+  background-color: #1e73be;
+  color: white;
+}

@@ -31,6 +31,13 @@ export class ReportesPage implements OnInit {
   tipoClienteData: number[] = [];
   tipoClienteColors: string[] = [];
 
+  readonly colorPorTipo: Record<string, string> = {
+    'Premier': '#dd1a1e',       // Rojo
+    'Tradicional': '#0065bc',   // Azul
+    'VIP': '#ffcc00',           // Amarillo
+    'No Aplica': '#6c757d'      // Gris
+  };
+
   chartOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
     plugins: {
@@ -48,18 +55,10 @@ export class ReportesPage implements OnInit {
       firstValueFrom(this.catalogoService.getTiposCliente())
     ]);
 
-    // Colores estándar del Dashboard
-    const colorPorTipo: Record<string, string> = {
-      'Premier': '#dd1a1e',
-      'Tradicional': '#0065bc',
-      'VIP': '#ffcc00',
-      'No Aplica': '#6c757d'
-    };
+    // Forzamos orden estable
+    const tiposFinales = ['Premier', 'Tradicional', 'VIP', 'No Aplica'];
 
-    // 1. Obtener tipos únicos REALES como en dashboard
-    const tiposDeClientes = Array.from(new Set(clientes.map(c => c.tipoCliente || 'No Aplica')));
-    const tiposFinales = [...new Set([...tiposCatalogo, ...tiposDeClientes])];
-
+    // Datos para tabla
     this.datosClientes = clientes.map(c => {
       const pedidosCliente = pedidos.filter(p => p.clienteId === c.id);
       return {
@@ -72,6 +71,7 @@ export class ReportesPage implements OnInit {
 
     this.datos$ = new Observable(observer => observer.next(this.datosClientes));
 
+    // Ranking ordenado
     this.ranking = clientes.map(c => {
       const pedidosCliente = pedidos.filter(p => p.clienteId === c.id);
       return {
@@ -81,12 +81,16 @@ export class ReportesPage implements OnInit {
       };
     }).sort((a, b) => b.totalPedidos - a.totalPedidos);
 
-    // 2. Armar gráfico desde tiposFinales
+    // Construir gráfico
     this.tipoClienteLabels = tiposFinales;
-    this.tipoClienteData = tiposFinales.map(t =>
-      clientes.filter(c => (c.tipoCliente || 'No Aplica') === t).length
+
+    this.tipoClienteData = tiposFinales.map(tipo =>
+      clientes.filter(c => (c.tipoCliente || 'No Aplica') === tipo).length
     );
-    this.tipoClienteColors = tiposFinales.map(t => colorPorTipo[t] || this.generarColorAleatorio());
+
+    this.tipoClienteColors = tiposFinales.map(tipo =>
+      this.colorPorTipo[tipo] || this.generarColorAleatorio()
+    );
   }
 
   estaInactivo(fecha: string | undefined): boolean {
