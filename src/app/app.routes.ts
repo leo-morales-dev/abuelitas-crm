@@ -15,32 +15,42 @@ export const appRoutes: Routes = [
     children: [
       {
         path: '',
-        loadChildren: () => import('./pages/dashboard/dashboard.routes').then(m => m.DASHBOARD_ROUTES),
+        loadChildren: () =>
+          import('./pages/dashboard/dashboard.routes').then(m => m.DASHBOARD_ROUTES),
       },
       {
         path: 'clientes',
-        loadChildren: () => import('./pages/clientes/clientes.routes').then(m => m.CLIENTES_ROUTES),
+        loadChildren: () =>
+          import('./pages/clientes/clientes.routes').then(m => m.CLIENTES_ROUTES),
       },
       {
         path: 'pedidos',
-        loadChildren: () => import('./pages/pedidos/pedidos.routes').then(m => m.PEDIDOS_ROUTES),
+        loadChildren: () =>
+          import('./pages/pedidos/pedidos.routes').then(m => m.PEDIDOS_ROUTES),
       },
       {
         path: 'fidelizacion',
-        loadChildren: () => import('./pages/fidelizacion/fidelizacion.routes').then(m => m.FIDELIZACION_ROUTES),
+        loadChildren: () =>
+          import('./pages/fidelizacion/fidelizacion.routes').then(m => m.FIDELIZACION_ROUTES),
       },
       {
         path: 'reportes',
-        loadChildren: () => import('./pages/reportes/reportes.routes').then(m => m.REPORTES_ROUTES),
+        loadChildren: () =>
+          import('./pages/reportes/reportes.routes').then(m => m.REPORTES_ROUTES),
       },
       {
         path: 'catalogos',
-        loadChildren: () => import('./pages/catalogos/catalogos.routes').then(m => m.CATALOGOS_ROUTES),
+        loadChildren: () =>
+          import('./pages/catalogos/catalogos.routes').then(m => m.CATALOGOS_ROUTES),
+      },
+      {
+        path: '**', // 👈 Redirige cualquier ruta inválida dentro del layout
+        redirectTo: '',
       }
     ]
   },
   {
-    path: '**',
-    redirectTo: '',
+    path: '**', // 👈 Ruta global inválida fuera del layout (por ejemplo /xxx sin login)
+    redirectTo: 'login',
   }
 ];
