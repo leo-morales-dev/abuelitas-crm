@@ -218,18 +218,46 @@ export class PedidoFormComponent implements OnInit {
   async guardarPedido() {
     const clienteId = this.form.get('clienteId')?.value;
     if (!clienteId || this.pizzasArray.length === 0) return;
-
+  
     const pedido: Pedido = this.form.getRawValue();
-
+  
     await this.pedidoService.crearPedido(pedido);
-    await this.clienteService.agregarPuntos(clienteId, this.calcularPuntos(pedido.precioFinal, this.promoAplicada, pedido.fechaHora));
-
+    await this.clienteService.agregarPuntos(
+      clienteId,
+      this.calcularPuntos(pedido.precioFinal, this.promoAplicada, pedido.fechaHora)
+    );
+  
+    // 🔁 Reset completo del formulario
     this.form.reset();
     this.pizzasArray.clear();
     this.pizzasArray.push(this.crearPizzaGroup());
-    this.form.patchValue({ fechaHora: this.getFechaActual(), estado: 'En progreso' });
+  
+    this.form.patchValue({
+      clienteId: '',
+      fechaHora: this.getFechaActual(),
+      estado: 'En progreso',
+      metodoPago: '',
+      tipoEntrega: '',
+      promoAplicada: '',
+      precioFinal: 0,
+      fechaCierre: ''
+    });
+  
+    // 🧽 Reset de validaciones y estado visual
+    this.form.markAsPristine();
+    this.form.markAsUntouched();
+    this.form.updateValueAndValidity();
+  
+    // ✅ Reset de lógica de promo
     this.promoAplicada = '';
+  
+    // 👀 Opcional: enfocar el primer campo (cliente)
+    setTimeout(() => {
+      const clienteSelect = document.querySelector('[formcontrolname="clienteId"]') as HTMLElement;
+      clienteSelect?.focus();
+    }, 0);
   }
+  
 
   calcularPuntos(monto: number, promo: string, fecha: string): number {
     let puntos = Math.floor(monto / 100) * 20;

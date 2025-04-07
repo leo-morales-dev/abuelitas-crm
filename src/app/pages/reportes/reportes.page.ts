@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ClienteService } from '../clientes/cliente.service';
 import { PedidoService } from '../pedidos/pedido.service';
 import { CatalogoService } from '../catalogos/catalogo.service';
-import { combineLatest, Observable, firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { NgFor, AsyncPipe } from '@angular/common';
 import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-reportes',
@@ -21,11 +23,13 @@ export class ReportesPage implements OnInit {
   private catalogoService = inject(CatalogoService);
 
   datos$!: Observable<any[]>;
+  datosClientes: any[] = [];
+
   ranking: { nombre: string; tipoCliente: string; totalPedidos: number }[] = [];
 
   tipoClienteLabels: string[] = [];
   tipoClienteData: number[] = [];
-  tipoClienteColors: string[] = ['#007bff', '#ffc107', '#28a745', '#6c757d', '#6610f2'];
+  tipoClienteColors: string[] = [];
 
   chartOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
@@ -44,22 +48,30 @@ export class ReportesPage implements OnInit {
       firstValueFrom(this.catalogoService.getTiposCliente())
     ]);
 
-    const todosTipos = [...tiposCatalogo, 'No Aplica'];
+    // Colores estándar del Dashboard
+    const colorPorTipo: Record<string, string> = {
+      'Premier': '#dd1a1e',
+      'Tradicional': '#0065bc',
+      'VIP': '#ffcc00',
+      'No Aplica': '#6c757d'
+    };
 
-    // Actividad
-    this.datos$ = new Observable(observer => {
-      observer.next(clientes.map(c => {
-        const pedidosCliente = pedidos.filter(p => p.clienteId === c.id);
-        return {
-          ...c,
-          totalPedidos: pedidosCliente.length,
-          ultimaCompra: pedidosCliente.at(-1)?.fechaHora,
-          inactivo: this.estaInactivo(pedidosCliente.at(-1)?.fechaHora)
-        };
-      }));
+    // 1. Obtener tipos únicos REALES como en dashboard
+    const tiposDeClientes = Array.from(new Set(clientes.map(c => c.tipoCliente || 'No Aplica')));
+    const tiposFinales = [...new Set([...tiposCatalogo, ...tiposDeClientes])];
+
+    this.datosClientes = clientes.map(c => {
+      const pedidosCliente = pedidos.filter(p => p.clienteId === c.id);
+      return {
+        ...c,
+        totalPedidos: pedidosCliente.length,
+        ultimaCompra: pedidosCliente.at(-1)?.fechaHora,
+        inactivo: this.estaInactivo(pedidosCliente.at(-1)?.fechaHora)
+      };
     });
 
-    // Ranking
+    this.datos$ = new Observable(observer => observer.next(this.datosClientes));
+
     this.ranking = clientes.map(c => {
       const pedidosCliente = pedidos.filter(p => p.clienteId === c.id);
       return {
@@ -69,18 +81,19 @@ export class ReportesPage implements OnInit {
       };
     }).sort((a, b) => b.totalPedidos - a.totalPedidos);
 
-    // Gráfico: tipos desde catálogo
-    this.tipoClienteLabels = todosTipos;
-    this.tipoClienteData = todosTipos.map(tipo =>
-      clientes.filter(c => (c.tipoCliente || 'No Aplica') === tipo).length
+    // 2. Armar gráfico desde tiposFinales
+    this.tipoClienteLabels = tiposFinales;
+    this.tipoClienteData = tiposFinales.map(t =>
+      clientes.filter(c => (c.tipoCliente || 'No Aplica') === t).length
     );
+    this.tipoClienteColors = tiposFinales.map(t => colorPorTipo[t] || this.generarColorAleatorio());
   }
 
   estaInactivo(fecha: string | undefined): boolean {
     if (!fecha) return true;
     const hoy = new Date();
     const ultima = new Date(fecha);
-    return hoy.getTime() - ultima.getTime() > (90 * 24 * 60 * 60 * 1000); // 90 días
+    return hoy.getTime() - ultima.getTime() > (90 * 24 * 60 * 60 * 1000);
   }
 
   getMedalla(index: number): string {
@@ -88,15 +101,46 @@ export class ReportesPage implements OnInit {
   }
 
   getTipoBadge(tipo: string): string {
-    switch ((tipo || 'Tradicional').toLowerCase()) {
+    switch ((tipo || 'No Aplica').toLowerCase()) {
+      case 'premier':
+        return 'bg-danger text-white';
       case 'tradicional':
         return 'bg-primary text-white';
-      case 'premier':
-        return 'bg-warning text-dark';
       case 'vip':
-        return 'bg-success text-white';
+        return 'bg-warning text-dark';
+      case 'no aplica':
       default:
         return 'bg-secondary text-white';
     }
+  }
+
+  exportarPDF() {
+    const doc = new jsPDF();
+    doc.text('Actividad de Clientes', 14, 16);
+    autoTable(doc, {
+      startY: 20,
+      head: [['Nombre', 'Total Pedidos', 'Última Compra', 'Estado']],
+      body: this.datosClientes.map(c => [
+        c.nombre,
+        c.totalPedidos,
+        c.ultimaCompra
+          ? new Date(c.ultimaCompra).toLocaleDateString('es-MX', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric'
+            })
+          : 'N/A',
+        c.inactivo ? 'Inactivo' : 'Activo'
+      ]),
+      theme: 'striped'
+    });
+    doc.save('actividad-clientes.pdf');
+  }
+
+  private generarColorAleatorio(): string {
+    const r = Math.floor(Math.random() * 156) + 100;
+    const g = Math.floor(Math.random() * 156) + 100;
+    const b = Math.floor(Math.random() * 156) + 100;
+    return `rgb(${r}, ${g}, ${b})`;
   }
 }

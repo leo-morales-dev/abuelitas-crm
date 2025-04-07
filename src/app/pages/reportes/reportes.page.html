@@ -6,7 +6,7 @@
     <div class="col-md-6">
       <div class="card shadow-sm">
         <div class="card-body text-center">
-          <h5 class="card-title">Tipo de Cliente</h5>
+          <h5 class="card-title">Distribución de Clientes</h5>
           <canvas baseChart
             [data]="{
               labels: tipoClienteLabels,
@@ -57,9 +57,15 @@
   <!-- Actividad -->
   <div class="card shadow-sm">
     <div class="card-body">
-      <h5 class="card-title">Actividad de Clientes</h5>
-      <table class="table table-bordered">
-        <thead>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="card-title mb-0">Actividad de Clientes</h5>
+        <button class="btn btn-outline-primary btn-sm" (click)="exportarPDF()">
+          <i class="bi bi-download me-1"></i> Descargar PDF
+        </button>
+      </div>
+
+      <table class="table table-bordered table-hover table-sm align-middle">
+        <thead class="table-light">
           <tr>
             <th>Nombre</th>
             <th>Total Pedidos</th>
@@ -71,9 +77,9 @@
           <tr *ngFor="let cliente of datos$ | async">
             <td>{{ cliente.nombre }}</td>
             <td>{{ cliente.totalPedidos }}</td>
-            <td>{{ cliente.ultimaCompra | date:'short' }}</td>
+            <td>{{ cliente.ultimaCompra | date: 'dd/MM/yyyy, h:mm a' }}</td>
             <td>
-              <span [ngClass]="cliente.inactivo ? 'text-danger' : 'text-success'">
+              <span [ngClass]="cliente.inactivo ? 'text-danger fw-bold' : 'text-success fw-bold'">
                 {{ cliente.inactivo ? 'Inactivo' : 'Activo' }}
               </span>
             </td>
