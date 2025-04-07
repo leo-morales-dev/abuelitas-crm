@@ -1,27 +1,41 @@
-.dashboard-card {
-  transition: 0.3s ease;
-  height: 100%;
+/* COLORES PRINCIPALES */
+.stat-red {
+  background-color: #dd1a1e;
+}
+.stat-blue {
+  background-color: #0065bc;
+}
+.stat-yellow {
+  background-color: #ffcc00;
 }
 
+/* TARJETAS */
+.dashboard-card {
+  transition: transform 0.3s ease;
+  height: 100%;
+  border-radius: 10px;
+}
 .dashboard-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
+/* ÍCONOS */
 .icon-box {
   width: 45px;
   height: 45px;
+  background-color: rgba(255, 255, 255, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 8px;
+  border-radius: 50%;
   font-size: 20px;
 }
 
+/* GRÁFICOS */
 .chart-small {
   max-height: 250px;
 }
-
 .card-title {
   font-size: 1.2rem;
 }
@@ -29,3 +43,115 @@
 select.form-select.w-auto {
   min-width: 120px;
 }
+
+/* BOTONES */
+.btn-filtrar {
+  background-color: #dd1a1e;
+  color: #fff;
+  border-color: #dd1a1e;
+}
+.btn-filtrar:hover {
+  background-color: #c4171a;
+  border-color: #c4171a;
+}
+
+.btn-reiniciar {
+  background-color: #ffcc00;
+  color: #000;
+  border-color: #ffcc00;
+}
+.btn-reiniciar:hover {
+  background-color: #e6b800;
+  border-color: #e6b800;
+}
+
+/* FILTRO HORIZONTAL */
+.filtro-horizontal {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  align-items: center;
+}
+.filtro-horizontal input,
+.filtro-horizontal select,
+.filtro-horizontal button {
+  flex-shrink: 0;
+}
+
+/* BOTONES personalizados */
+.btn-filtrar {
+  background-color: #dd1a1e;
+  color: white;
+  border-color: #dd1a1e;
+}
+.btn-filtrar:hover {
+  background-color: #c4171a;
+  border-color: #c4171a;
+}
+
+.btn-reiniciar {
+  background-color: #ffcc00;
+  color: #000;
+  border-color: #ffcc00;
+}
+.btn-reiniciar:hover {
+  background-color: #e6b800;
+  border-color: #e6b800;
+}
+
+/* Alineación horizontal tipo promociones */
+.d-flex.flex-wrap.gap-2.align-items-center {
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+/* Tamaño más compacto para los inputs de fecha */
+input[type="date"].form-control-sm {
+  width: 150px;
+}
+
+/* 🌟 Estilo moderno para la tabla de pedidos */
+.table-modern {
+  border-collapse: separate;
+  border-spacing: 0 0.5rem;
+}
+
+.table-modern thead {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+
+.table-modern thead th {
+  border: none;
+  color: #333;
+  padding: 1rem 1rem;
+}
+
+.table-modern tbody tr {
+  background-color: #ffffff;
+  transition: box-shadow 0.2s ease;
+  border-radius: 8px;
+}
+
+.table-modern tbody tr:hover {
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.table-modern td {
+  padding: 1rem;
+  vertical-align: middle;
+  border-top: none;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.9rem;
+}
+
+.table-modern td:first-child {
+  font-weight: 500;
+}
+
+.table-modern td:last-child {
+  white-space: nowrap;
+}
+

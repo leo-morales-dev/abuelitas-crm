@@ -1,9 +1,9 @@
-import { Component, OnInit, inject, Signal, computed, signal } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ClienteService } from '../clientes/cliente.service';
 import { PedidoService } from '../pedidos/pedido.service';
 import { CatalogoService } from '../catalogos/catalogo.service';
-import { ChartConfiguration, ChartData } from 'chart.js';
+import { ChartData, ChartOptions } from 'chart.js';
 import { NgChartsModule } from 'ng2-charts';
 import { NgFor, AsyncPipe, DatePipe, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -24,8 +24,6 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.css']
 })
-
-// Fragmento relevante del DashboardPage con correcciones
 export class DashboardPage implements OnInit {
   private clienteService = inject(ClienteService);
   private pedidoService = inject(PedidoService);
@@ -34,7 +32,10 @@ export class DashboardPage implements OnInit {
   totalClientes = 0;
   totalPedidos = 0;
   clienteTop: string = '-';
-  vista: 'Día' | 'Semana' | 'Mes' = 'Mes';
+  vista: 'Día' | 'Semana' | 'Mes' = 'Día';
+
+  fechaInicio: string = '';
+  fechaFin: string = '';
 
   ultimosPedidos: any[] = [];
   todosPedidos: any[] = [];
@@ -42,7 +43,23 @@ export class DashboardPage implements OnInit {
 
   graficoData: ChartData<'bar'> = {
     labels: [],
-    datasets: [{ label: 'Clientes', data: [] }]
+    datasets: [{ label: '', data: [] }]
+  };
+
+  graficoOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: { enabled: true }
+    },
+    scales: {
+      y: {
+        ticks: {
+          stepSize: 1
+        },
+        beginAtZero: true
+      }
+    }
   };
 
   graficoPedidos: ChartData<'bar'> = {
@@ -51,7 +68,7 @@ export class DashboardPage implements OnInit {
   };
 
   async ngOnInit() {
-    const [clientes, pedidos, tipos] = await Promise.all([
+    const [clientes, pedidos, tiposDesdeCatalogo] = await Promise.all([
       firstValueFrom(this.clienteService.obtenerClientes()),
       firstValueFrom(this.pedidoService.obtenerPedidos()),
       firstValueFrom(this.catalogoService.getTiposCliente())
@@ -63,7 +80,6 @@ export class DashboardPage implements OnInit {
     this.totalClientes = clientes.length;
     this.totalPedidos = pedidos.length;
 
-    // Cliente TOP
     const ranking = clientes.map(c => {
       const pedidosCliente = pedidos.filter(p => p.clienteId === c.id);
       return { nombre: c.nombre, total: pedidosCliente.length };
@@ -71,20 +87,26 @@ export class DashboardPage implements OnInit {
 
     this.clienteTop = ranking[0]?.nombre || '-';
 
-    // Distribución por tipo
-    const todosTipos = [...tipos, 'No Aplica'];
+    const tiposDeClientes = Array.from(new Set(clientes.map(c => c.tipoCliente || 'No Aplica')));
+    const tiposFinales = [...new Set([...tiposDesdeCatalogo, ...tiposDeClientes])];
+
+    const coloresBase = ['#dd1a1e', '#0065bc', '#ffcc00', '#6f42c1', '#17a2b8', '#fd7e14', '#20c997'];
+
+    const backgroundColors = tiposFinales.map((_, i) =>
+      i < coloresBase.length ? coloresBase[i] : this.generarColorAleatorio()
+    );
+
     this.graficoData = {
-      labels: todosTipos,
+      labels: tiposFinales,
       datasets: [{
-        label: 'Clientes por tipo',
-        data: todosTipos.map(t =>
+        label: '',
+        data: tiposFinales.map(t =>
           clientes.filter(c => (c.tipoCliente || 'No Aplica') === t).length
         ),
-        backgroundColor: ['#007bff', '#ffc107', '#28a745', '#6c757d', '#6610f2']
+        backgroundColor: backgroundColors
       }]
     };
 
-    // Ultimos pedidos con nombres de cliente
     this.ultimosPedidos = pedidos
       .sort((a, b) => new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime())
       .slice(0, 5)
@@ -99,7 +121,15 @@ export class DashboardPage implements OnInit {
   actualizarGraficoPedidos() {
     const agrupados: Record<string, number> = {};
 
-    for (const pedido of this.todosPedidos) {
+    const inicio = this.fechaInicio ? new Date(this.fechaInicio) : null;
+    const fin = this.fechaFin ? new Date(this.fechaFin + 'T23:59:59') : null;
+
+    const pedidosFiltrados = this.todosPedidos.filter(p => {
+      const fecha = new Date(p.fechaHora);
+      return (!inicio || fecha >= inicio) && (!fin || fecha <= fin);
+    });
+
+    for (const pedido of pedidosFiltrados) {
       const fecha = new Date(pedido.fechaHora);
       let clave = '';
 
@@ -119,14 +149,38 @@ export class DashboardPage implements OnInit {
       agrupados[clave] = (agrupados[clave] || 0) + 1;
     }
 
+    let clavesOrdenadas: string[] = [];
+
+    if (this.vista === 'Semana') {
+      clavesOrdenadas = Object.keys(agrupados).sort((a, b) => {
+        const numA = parseInt(a.replace('Sem ', ''), 10);
+        const numB = parseInt(b.replace('Sem ', ''), 10);
+        return numA - numB;
+      });
+    } else {
+      clavesOrdenadas = Object.keys(agrupados).sort((a, b) => {
+        const fechaA = new Date(a);
+        const fechaB = new Date(b);
+        return fechaA.getTime() - fechaB.getTime();
+      });
+    }
+
     this.graficoPedidos = {
-      labels: Object.keys(agrupados),
+      labels: clavesOrdenadas,
       datasets: [{
         label: 'Pedidos por ' + this.vista,
-        data: Object.values(agrupados),
-        backgroundColor: '#007bff'
+        data: clavesOrdenadas.map(k => agrupados[k]),
+        backgroundColor: '#0065bc',
+        borderRadius: 6,
+        barThickness: 30
       }]
     };
+  }
+
+  resetFiltros() {
+    this.fechaInicio = '';
+    this.fechaFin = '';
+    this.actualizarGraficoPedidos();
   }
 
   obtenerSemanaDelAno(fecha: Date): number {
@@ -135,5 +189,11 @@ export class DashboardPage implements OnInit {
     const dias = Math.floor((fecha.getTime() - inicioAno.getTime()) / unDia);
     return Math.ceil((dias + inicioAno.getDay() + 1) / 7);
   }
-}
 
+  private generarColorAleatorio(): string {
+    const r = Math.floor(Math.random() * 156) + 100;
+    const g = Math.floor(Math.random() * 156) + 100;
+    const b = Math.floor(Math.random() * 156) + 100;
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+}

@@ -1,25 +1,25 @@
 <div class="container-fluid px-4 mt-4">
   <h2 class="mb-4 fw-bold">Resumen General</h2>
 
+  <!-- MÉTRICAS PRINCIPALES -->
   <div class="row g-4">
-    <!-- Métricas principales -->
     <div class="col-md-3" *ngFor="let stat of [
-      { label: 'Total Clientes', value: totalClientes, icon: 'bi-people-fill', color: 'primary' },
-      { label: 'Total Pedidos', value: totalPedidos, icon: 'bi-box-seam', color: 'success' },
-      { label: 'Top Cliente', value: clienteTop, icon: 'bi-star-fill', color: 'warning' }
+      { label: 'Total Clientes', value: totalClientes, icon: 'bi-people-fill', color: 'stat-red' },
+      { label: 'Total Pedidos', value: totalPedidos, icon: 'bi-box-seam', color: 'stat-blue' },
+      { label: 'Top Cliente', value: clienteTop, icon: 'bi-star-fill', color: 'stat-yellow' }
     ]">
-      <div class="card dashboard-card shadow-sm border-0">
+      <div class="card dashboard-card text-white border-0 shadow-sm" [ngClass]="stat.color">
         <div class="card-body d-flex flex-column align-items-start">
-          <div class="icon-box mb-3 text-white" [ngClass]="'bg-' + stat.color">
+          <div class="icon-box mb-3">
             <i class="bi" [ngClass]="stat.icon"></i>
           </div>
-          <h6 class="text-muted">{{ stat.label }}</h6>
-          <h4 class="fw-bold text-dark">{{ stat.value }}</h4>
+          <h6 class="fw-semibold">{{ stat.label }}</h6>
+          <h4 class="fw-bold">{{ stat.value }}</h4>
         </div>
       </div>
     </div>
 
-    <!-- Gráfico Distribución Clientes -->
+    <!-- DISTRIBUCIÓN DE CLIENTES -->
     <div class="col-md-3">
       <div class="card dashboard-card shadow-sm border-0">
         <div class="card-body">
@@ -27,63 +27,108 @@
           <canvas baseChart
                   class="chart-small"
                   [data]="graficoData"
-                  chartType="bar">
-          </canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pedidos por Periodo -->
-  <div class="row mt-5">
-    <div class="col-12">
-      <div class="card shadow-sm border-0">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">Pedidos por {{ vista }}</h5>
-            <select class="form-select w-auto" [(ngModel)]="vista" (change)="actualizarGraficoPedidos()">
-              <option value="Día">Día</option>
-              <option value="Semana">Semana</option>
-              <option value="Mes">Mes</option>
-            </select>
-          </div>
-          <canvas baseChart
-                  class="chart-small mt-3"
-                  [data]="graficoPedidos"
                   chartType="bar"
-                  [options]="{ responsive: true, maintainAspectRatio: false }">
+                  [options]="graficoOptions">
           </canvas>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Últimos Pedidos -->
-  <div class="row mt-5">
-    <div class="col-12">
-      <div class="card shadow-sm border-0">
-        <div class="card-body">
-          <h5 class="card-title mb-3">Últimos Pedidos</h5>
-          <div class="table-responsive">
-            <table class="table table-hover align-middle">
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Método de Pago</th>
-                  <th>Fecha</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let pedido of ultimosPedidos">
-                  <td>{{ pedido.clienteNombre }}</td>
-                  <td>{{ pedido.metodoPago }}</td>
-                  <td>{{ pedido.fechaHora | date: 'short' }}</td>
-                </tr>
-              </tbody>
-            </table>            
-          </div>
+  <!-- PEDIDOS -->
+<div class="row mt-5">
+  <div class="col-12">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <!-- Título principal -->
+        <h4 class="fw-bold mb-4">Pedidos</h4>
+
+        <!-- FILTROS ENCIMA -->
+        <div class="d-flex flex-wrap justify-content-start align-items-center gap-2 mb-4">
+          <label class="fw-semibold mb-0 me-2">Filtrar por Fecha:</label>
+
+          <select class="form-select form-select-sm w-auto" [(ngModel)]="vista">
+            <option value="Día">Día</option>
+            <option value="Semana">Semana</option>
+            <option value="Mes">Mes</option>
+          </select>
+
+          <input type="date" class="form-control form-control-sm" [(ngModel)]="fechaInicio">
+          <input type="date" class="form-control form-control-sm" [(ngModel)]="fechaFin">
+
+          <button class="btn btn-sm btn-filtrar d-flex align-items-center" (click)="actualizarGraficoPedidos()">
+            <i class="bi bi-funnel-fill me-1"></i> Filtrar
+          </button>
+
+          <button class="btn btn-sm btn-reiniciar d-flex align-items-center" (click)="resetFiltros()">
+            <i class="bi bi-arrow-clockwise me-1"></i> Reiniciar
+          </button>
+        </div>
+
+        <!-- Subtítulo del gráfico -->
+        <h5 class="card-title mb-2">Pedidos por {{ vista }}</h5>
+
+        <!-- GRÁFICA -->
+        <canvas baseChart
+                class="chart-small mt-2"
+                [data]="graficoPedidos"
+                chartType="bar"
+                [options]="{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                      backgroundColor: '#333',
+                      titleColor: '#fff',
+                      bodyColor: '#fff'
+                    }
+                  },
+                  scales: {
+                    x: {
+                      ticks: { color: '#333' },
+                      grid: { display: false }
+                    },
+                    y: {
+                      beginAtZero: true,
+                      ticks: { color: '#333' },
+                      grid: { color: '#ddd' }
+                    }
+                  }
+                }">
+        </canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- ÚLTIMOS PEDIDOS -->
+<div class="row mt-5">
+  <div class="col-12">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5 class="card-title mb-4">Últimos Pedidos</h5>
+        <div class="table-responsive">
+          <table class="table table-modern align-middle">
+            <thead>
+              <tr>
+                <th><i class="bi bi-person-fill me-1"></i> Cliente</th>
+                <th><i class="bi bi-credit-card-fill me-1"></i> Método de Pago</th>
+                <th><i class="bi bi-calendar-event-fill me-1"></i> Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let pedido of ultimosPedidos">
+                <td class="fw-semibold text-dark">{{ pedido.clienteNombre }}</td>
+                <td>{{ pedido.metodoPago }}</td>
+                <td>{{ pedido.fechaHora | date: 'short' }}</td>
+              </tr>
+            </tbody>
+          </table>            
         </div>
       </div>
     </div>
   </div>
+</div>
+
 </div>
