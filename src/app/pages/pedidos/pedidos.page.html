@@ -1,10 +1,10 @@
 <div class="container mt-4">
-  <h2>Pedidos</h2>
+  <h2 class="fw-bold mb-4">Pedidos</h2>
 
   <app-pedido-form></app-pedido-form>
 
-  <table class="table table-striped mt-5">
-    <thead>
+  <table class="table table-hover modern-table mt-5">
+    <thead class="table-light">
       <tr>
         <th>Cliente</th>
         <th>Fecha/Hora</th>
@@ -21,23 +21,22 @@
     <tbody>
       <tr *ngFor="let p of pedidos">
         <td>{{ getNombreCliente(p.clienteId) }}</td>
-        <td>{{ p.fechaHora | date: 'short' }}</td>
+
+        <td>{{ p.fechaHora | date: 'dd/MM/yyyy, h:mm a' }}</td>
 
         <td>
-          <ul class="mb-0">
-            <li *ngFor="let pizza of p.pizzas">
+          <ul class="mb-0 ps-3">
+            <li *ngFor="let pizza of p.pizzas" class="mb-1">
               <strong>{{ pizza.tipo }}</strong>
               <span *ngIf="pizza.especialidad">({{ pizza.especialidad }})</span><br>
-              <small>Ingredientes: {{ pizza.ingredientes?.join(', ') || 'N/A' }}</small>
+              <small class="text-muted">Ingredientes: {{ pizza.ingredientes?.join(', ') || 'N/A' }}</small>
             </li>
           </ul>
         </td>
 
         <td>{{ p.metodoPago }}</td>
         <td>{{ p.tipoEntrega }}</td>
-        <td>
-          {{ p.precioFinal !== undefined ? ('$' + p.precioFinal.toFixed(2)) : 'S/N/A' }}
-        </td>
+        <td>${{ p.precioFinal?.toFixed(2) || '0.00' }}</td>
         <td>{{ p.promoAplicada || '--' }}</td>
 
         <td>
@@ -48,8 +47,23 @@
           </ng-container>
         </td>
 
-        <td>{{ p.estado }}</td>
-        <td>{{ p.fechaCierre ? (p.fechaCierre | date: 'short') : '--' }}</td>
+        <td>
+          <span [ngClass]="{ 'text-success': p.estado === 'Finalizado', 'text-primary': p.estado === 'En progreso' }">
+            {{ p.estado }}
+          </span>
+        </td>
+
+        <td>
+          <ng-container *ngIf="p.fechaCierre; else btnFinalizar">
+            {{ p.fechaCierre | date: 'dd/MM/yyyy, h:mm a' }}
+          </ng-container>
+
+          <ng-template #btnFinalizar>
+            <button class="btn btn-sm btn-azul" (click)="finalizarPedido(p)">
+              <i class="bi bi-check-circle me-1"></i> Finalizar
+            </button>
+          </ng-template>
+        </td>
       </tr>
     </tbody>
   </table>

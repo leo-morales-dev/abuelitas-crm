@@ -5,7 +5,8 @@ import {
   collectionData,
   addDoc,
   doc,
-  getDoc
+  getDoc,
+  updateDoc
 } from '@angular/fire/firestore';
 import { Observable, firstValueFrom } from 'rxjs';
 import { FidelizacionService } from '../fidelizacion/fidelizacion.service';
@@ -36,7 +37,6 @@ export class PedidoService {
     let total = 0;
     const pizzas = pedido.pizzas || [];
 
-    // 🔥 Obtener promociones válidas
     const promociones: Promocion[] = await firstValueFrom(this.catalogoService.obtenerPromociones());
     const hoy = new Date();
     const diaActual = hoy.toLocaleDateString('es-MX', { weekday: 'long' }).toLowerCase();
@@ -44,15 +44,12 @@ export class PedidoService {
     const promocionesValidas = promociones.filter(promo => {
       const desde = new Date(promo.fechaInicio);
       const hasta = new Date(promo.fechaFin);
-
       const cumpleFecha = desde <= hoy && hoy <= hasta;
       const cumpleDia = promo.diasValidos.includes(diaActual);
       const cumpleEntrega = promo.tipoEntrega ? promo.tipoEntrega === pedido.tipoEntrega : true;
-
       return cumpleFecha && cumpleDia && cumpleEntrega;
     });
 
-    // Aplicar promoción por grupo de pizzas de cierto tipo
     let promoAplicada = '';
     for (const promo of promocionesValidas) {
       const tipoPizza = promo.condiciones?.tipoPizzaAplicable;
@@ -77,7 +74,7 @@ export class PedidoService {
           }
 
           promoAplicada = promo.nombre;
-          break; // ✅ Aplicamos solo una promoción
+          break;
         }
       } else if (!tipoPizza && promo.precio && pizzas.length >= minPizzas) {
         total = promo.precio;
@@ -86,19 +83,17 @@ export class PedidoService {
       }
     }
 
-    // Si no hubo promo aplicada, calcular precio normal
     if (!promoAplicada) {
       for (const p of pizzas) {
         total += await this.obtenerPrecioPizza(p.tipo);
       }
     }
 
-    // ✅ Descuento por tipo de cliente
     if (tipoCliente === 'Premier') {
       total *= 0.95;
     } else if (tipoCliente === 'VIP') {
       total *= 0.90;
-      pedido.tipoEntrega = 'Envío gratuito'; // Solo para mostrarlo al cliente
+      pedido.tipoEntrega = 'Envío gratuito';
     }
 
     pedido.precioFinal = parseFloat(total.toFixed(2));
@@ -121,5 +116,20 @@ export class PedidoService {
     const tiposPizza = await firstValueFrom(this.catalogoService.obtenerLista('tiposPizza'));
     const tipoEncontrado = tiposPizza.find(p => p.nombre === tipo);
     return tipoEncontrado?.precio || 0;
+  }
+
+  async finalizarPedido(id: string): Promise<void> {
+    const ref = doc(this.firestore, `pedidos/${id}`);
+    const ahora = new Date().toISOString();
+    await updateDoc(ref, {
+      estado: 'Finalizado',
+      fechaCierre: ahora
+    });
+  }
+
+  // ✅ ESTE MÉTODO FALTABA 👇
+  async actualizarPedido(id: string, datos: Partial<Pedido>): Promise<void> {
+    const ref = doc(this.firestore, `pedidos/${id}`);
+    await updateDoc(ref, datos);
   }
 }

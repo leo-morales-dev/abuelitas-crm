@@ -3,7 +3,7 @@
     <!-- Cliente -->
     <div class="col-md-6">
       <select class="form-select" formControlName="clienteId" required>
-        <option value="">Seleccionar cliente</option>
+        <option disabled hidden value="">Seleccionar cliente</option>
         <option *ngFor="let c of clientes$ | async" [value]="c.id">{{ c.nombre }}</option>
       </select>
     </div>
@@ -22,10 +22,10 @@
           <div class="col-md-4">
             <div class="input-group">
               <select class="form-select" formControlName="tipo">
-                <option value="" disabled selected>Seleccionar tipo</option>
+                <option disabled hidden value="">Seleccionar tipo</option>
                 <option *ngFor="let tipo of tiposPizza">{{ tipo }}</option>
               </select>
-              <button class="btn btn-outline-secondary" type="button" (click)="agregarTipoPizza()">+</button>
+              <button class="btn btn-azul" type="button" (click)="agregarTipoPizza()">+</button>
             </div>
           </div>
 
@@ -35,7 +35,7 @@
               <select multiple class="form-select" formControlName="ingredientes">
                 <option *ngFor="let ing of ingredientesDisponibles" [value]="ing">{{ ing }}</option>
               </select>
-              <button class="btn btn-outline-secondary" type="button" (click)="agregarIngrediente()">+</button>
+              <button class="btn btn-azul" type="button" (click)="agregarIngrediente()">+</button>
             </div>
             <div class="form-text">Ctrl/Cmd para seleccionar varios</div>
           </div>
@@ -47,7 +47,7 @@
                 <option value="">Especialidad (opcional)</option>
                 <option *ngFor="let esp of especialidadesDisponibles" [value]="esp">{{ esp }}</option>
               </select>
-              <button class="btn btn-outline-secondary" type="button" (click)="agregarEspecialidad()">+</button>
+              <button class="btn btn-azul" type="button" (click)="agregarEspecialidad()">+</button>
             </div>
           </div>
 
@@ -65,10 +65,10 @@
     <div class="col-md-6">
       <div class="input-group">
         <select class="form-select" formControlName="metodoPago">
-          <option value="" disabled selected>Método de pago</option>
+          <option disabled hidden value="">Método de pago</option>
           <option *ngFor="let metodo of metodosPago">{{ metodo }}</option>
         </select>
-        <button class="btn btn-outline-secondary" type="button" (click)="agregarMetodoPago()">+</button>
+        <button class="btn btn-azul" type="button" (click)="agregarMetodoPago()">+</button>
       </div>
     </div>
 
@@ -76,14 +76,14 @@
     <div class="col-md-6">
       <div class="input-group">
         <select class="form-select" formControlName="tipoEntrega">
-          <option value="" disabled selected>Tipo de entrega</option>
+          <option disabled hidden value="">Tipo de entrega</option>
           <option *ngFor="let tipo of tiposEntrega">{{ tipo }}</option>
         </select>
-        <button class="btn btn-outline-secondary" type="button" (click)="agregarTipoEntrega()">+</button>
+        <button class="btn btn-azul" type="button" (click)="agregarTipoEntrega()">+</button>
       </div>
     </div>
 
-    <!-- Precio final y promoción -->
+    <!-- Precio final -->
     <div class="col-md-6">
       <label class="form-label">Precio Final</label>
       <div class="form-control bg-light">
@@ -103,15 +103,15 @@
       </select>
     </div>
 
-    <!-- Fecha cierre -->
-    <div class="col-md-6">
+    <!-- Fecha cierre visible solo si es Finalizado -->
+    <div class="col-md-6" *ngIf="mostrarFechaCierre">
       <label class="form-label">Fecha de Cierre</label>
-      <input type="datetime-local" class="form-control" formControlName="fechaCierre">
+      <input type="datetime-local" class="form-control" [value]="form.get('fechaCierre')?.value" disabled>
     </div>
   </div>
 
   <!-- Guardar -->
   <div class="text-end mt-3">
-    <button class="btn btn-success" type="submit" [disabled]="form.invalid">Guardar Pedido</button>
+    <button class="btn btn-azul" type="submit" [disabled]="form.invalid">Guardar Pedido</button>
   </div>
 </form>

@@ -1,0 +1,32 @@
+/* Botón azul principal */
+.btn-azul {
+    background-color: #dd1a1e;
+    color: #fff;
+    border: none;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .btn-azul:hover {
+    background-color: #c4171a;
+  }
+  
+  /* Diseño moderno de tabla */
+  .modern-table {
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 0.95rem;
+  }
+  
+  .modern-table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+  }
+  
+  .modern-table td {
+    vertical-align: middle;
+    padding: 12px 10px;
+  }
+
+  .text-success {
+    color: #dd1a1e !important;
+  }

@@ -22,6 +22,7 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-pedido-form',
   templateUrl: './pedido-form.component.html',
+  styleUrls: ['./pedido-form.component.css'],
   standalone: true,
   imports: [ReactiveFormsModule, NgIf, NgFor, AsyncPipe, CurrencyPipe]
 })
@@ -43,6 +44,7 @@ export class PedidoFormComponent implements OnInit {
 
   tipoClienteActual = 'Tradicional';
   promoAplicada: string = '';
+  mostrarFechaCierre = false;
 
   async ngOnInit() {
     this.form = this.fb.group({
@@ -58,9 +60,16 @@ export class PedidoFormComponent implements OnInit {
     });
 
     this.form.get('estado')?.valueChanges.subscribe(estado => {
-      this.form.get('fechaCierre')?.setValue(
-        estado === 'Finalizado' ? this.getFechaActual() : ''
-      );
+      const control = this.form.get('fechaCierre');
+      if (estado === 'Finalizado') {
+        control?.setValue(this.getFechaActual());
+        control?.disable();
+        this.mostrarFechaCierre = true;
+      } else {
+        control?.setValue('');
+        control?.enable();
+        this.mostrarFechaCierre = false;
+      }
     });
 
     this.catalogoService.obtenerLista('tiposPizza').subscribe(lista => {

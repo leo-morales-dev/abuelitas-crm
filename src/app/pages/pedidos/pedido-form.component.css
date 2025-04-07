@@ -1,0 +1,23 @@
+/* Estilo para input deshabilitado de cierre */
+input[disabled] {
+    background-color: #f5f5f5;
+    color: #555;
+    cursor: not-allowed;
+    font-style: italic;
+  }
+
+  /* Botón azul principal */
+.btn-azul {
+    background-color: #0065bc;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .btn-azul:hover {
+    background-color: #0052a3;
+  }
+  
