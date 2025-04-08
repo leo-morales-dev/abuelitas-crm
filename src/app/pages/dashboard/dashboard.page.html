@@ -47,7 +47,7 @@
         <div class="d-flex flex-wrap justify-content-start align-items-center gap-2 mb-4">
           <label class="fw-semibold mb-0 me-2">Filtrar por Fecha:</label>
 
-          <select class="form-select form-select-sm w-auto" [(ngModel)]="vista">
+          <select class="form-select form-select-sm w-auto" [(ngModel)]="vista" (change)="vistaCambiada()">
             <option value="Día">Día</option>
             <option value="Semana">Semana</option>
             <option value="Mes">Mes</option>

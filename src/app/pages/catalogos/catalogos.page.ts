@@ -70,22 +70,29 @@ export class CatalogosPage implements OnInit {
   }
 
   agregar(path: string) {
-    const nuevo = this.nuevos[path];
-    if (nuevo?.nombre?.trim()) {
-      this.catalogoService.agregarItem(path, nuevo);
-      this.nuevos[path] = { nombre: '', precio: undefined };
+    const item = this.nuevos[path];
+    if (!item.nombre?.trim()) return;
+
+    const nuevoItem: any = {
+      nombre: item.nombre
+    };
+
+    // ✅ Solo agrega el precio si está definido y es válido
+    if (typeof item.precio === 'number' && !isNaN(item.precio)) {
+      nuevoItem.precio = item.precio;
     }
+
+    this.catalogoService.agregarItem(path, nuevoItem).then(() => {
+      this.nuevos[path] = { nombre: '', precio: undefined };
+    });
   }
 
   soloNumeros(event: KeyboardEvent) {
     const charCode = event.key;
-  
-    // Solo permite dígitos (0-9)
     if (!/^\d$/.test(charCode)) {
       event.preventDefault();
     }
   }
-  
 
   async eliminar(path: string, id: string) {
     if (confirm('¿Eliminar este ítem?')) {
@@ -129,7 +136,7 @@ export class CatalogosPage implements OnInit {
       diasValidos: [],
       tipoEntrega: '',
       condiciones: {
-        minimoPizzas: 0,
+        minimoPizzas: undefined,
         tipoPizzaAplicable: ''
       }
     };

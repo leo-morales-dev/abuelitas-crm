@@ -175,11 +175,20 @@ export class DashboardPage implements OnInit {
     };
   }
 
+  vistaCambiada() {
+    // Si el usuario solo cambia la vista sin elegir fechas, actualizamos automáticamente
+    if (!this.fechaInicio && !this.fechaFin) {
+      this.actualizarGraficoPedidos();
+    }
+  }  
+
   resetFiltros() {
     this.fechaInicio = '';
     this.fechaFin = '';
+    this.vista = 'Día';
     this.actualizarGraficoPedidos();
   }
+  
 
   obtenerSemanaDelAno(fecha: Date): number {
     const unDia = 86400000;
