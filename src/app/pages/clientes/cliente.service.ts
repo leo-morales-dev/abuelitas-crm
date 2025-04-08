@@ -67,9 +67,6 @@ export class ClienteService {
     }
   }
 
-  /**
-   * ✅ Nueva función para obtener preferencias de entrega desde catálogo
-   */
   obtenerPreferenciasEntrega(): Observable<any[]> {
     const ref = collection(this.firestore, 'catalogos/tiposEntrega/items');
     return collectionData(ref);

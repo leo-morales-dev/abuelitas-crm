@@ -25,12 +25,12 @@ export class FidelizacionService {
   async asignarPuntos(clienteId: string, tipoCliente: string, total: number, tipoPizza: string) {
     let puntos = this.calcularPuntosBase(tipoCliente, total);
 
-    // 🔸 Día especial (viernes o sábado) → puntos x2
+    // Día especial (viernes o sábado) → puntos x2
     if (this.esDiaEspecial()) {
       puntos *= 2;
     }
 
-    // 🔸 Combo → +10%
+    // Combo → +10%
     if (this.esCombo(tipoPizza)) {
       puntos *= 1.1;
     }

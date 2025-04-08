@@ -127,7 +127,6 @@ export class PedidoService {
     });
   }
 
-  // ✅ ESTE MÉTODO FALTABA 👇
   async actualizarPedido(id: string, datos: Partial<Pedido>): Promise<void> {
     const ref = doc(this.firestore, `pedidos/${id}`);
     await updateDoc(ref, datos);

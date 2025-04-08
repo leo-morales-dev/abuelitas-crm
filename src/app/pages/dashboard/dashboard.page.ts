@@ -5,7 +5,7 @@ import { PedidoService } from '../pedidos/pedido.service';
 import { CatalogoService } from '../catalogos/catalogo.service';
 import { ChartData, ChartOptions } from 'chart.js';
 import { NgChartsModule } from 'ng2-charts';
-import { NgFor, DatePipe } from '@angular/common'; // 🔄 Quitamos NgIf y AsyncPipe
+import { NgFor, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 

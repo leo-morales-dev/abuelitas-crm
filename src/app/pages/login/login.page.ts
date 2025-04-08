@@ -22,7 +22,7 @@ export class LoginPage implements OnInit {
     password: ['', Validators.required]
   });
 
-  recordarUsuario = false; // ✅ ESTA PROPIEDAD ES LA QUE USA NGMODEL
+  recordarUsuario = false;
 
   ngOnInit(): void {
     const savedEmail = localStorage.getItem('crm_email');

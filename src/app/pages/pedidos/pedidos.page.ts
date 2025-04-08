@@ -10,7 +10,7 @@ import { PedidoFormComponent } from './pedido-form.component';
   standalone: true,
   imports: [CommonModule, NgFor, PedidoFormComponent],
   templateUrl: './pedidos.page.html',
-  styleUrls: ['./pedidos.page.css'] // ✅ agregado
+  styleUrls: ['./pedidos.page.css']
 })
 export class PedidosPage implements OnInit {
   private pedidoService = inject(PedidoService);

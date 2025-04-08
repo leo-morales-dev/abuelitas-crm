@@ -210,7 +210,7 @@ export class PedidoFormComponent implements OnInit {
     if (!clienteId || this.pizzasArray.length === 0) return;
 
     const pedido: Pedido = this.form.getRawValue();
-    await this.pedidoService.crearPedido(pedido); // ✅ fidelización ya se aplica aquí
+    await this.pedidoService.crearPedido(pedido);
 
     this.form.reset();
     this.pizzasArray.clear();

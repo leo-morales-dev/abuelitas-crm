@@ -10,7 +10,7 @@
   .catalogo-card {
     flex: 1 1 300px;
     background-color: #f8f9fa;
-    border: 2px solid #0065bc; /* ✅ Azul principal */
+    border: 2px solid #0065bc; 
     border-radius: 0.5rem;
     padding: 1.5rem;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
@@ -70,7 +70,7 @@
     border-radius: 0.4rem;
   }
   
-  /* Lista de items del catálogo */
+
   .catalogo-item {
     display: flex;
     justify-content: space-between;
@@ -82,24 +82,22 @@
     border-radius: 0.4rem;
   }
   
-  /* Espacio entre botones de acción */
+
   .catalogo-item button {
     margin-left: 0.5rem;
   }
   
-  /* Cards de promociones */
+
   .card.border-primary {
     border: 2px solid #0065bc !important;
   }
   
-  /* Efecto de levantar las cards al hacer hover */
 .card:hover {
     transform: translateY(-5px);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
   }
   
-  /* Asegura suavidad en las animaciones */
   .card {
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   }

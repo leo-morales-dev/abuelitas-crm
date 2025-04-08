@@ -16,11 +16,11 @@
 select {
   position: relative;
   z-index: 1;
-  scrollbar-color: #0065bc #f1f1f1; /* Azul y fondo claro */
+  scrollbar-color: #0065bc #f1f1f1;
   scrollbar-width: thin;
 }
 
-/* Estilo para scroll tipo WebKit (Chrome, Edge, Safari) */
+
 select::-webkit-scrollbar {
   width: 6px;
 }
@@ -38,7 +38,7 @@ select:focus {
   overflow: visible !important;
 }
 
-/* placeholder style for first option */
+
 select option[disabled][hidden] {
   color: #aaa;
 }

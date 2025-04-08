@@ -45,7 +45,6 @@ export const appRoutes: Routes = [
       }
     ]
   },
-  // Ruta global por si nada coincide → ir a login o página 404 personalizada
   {
     path: '**',
     redirectTo: 'login',

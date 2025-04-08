@@ -10,7 +10,7 @@ import {
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Promocion } from '../../models/promocion.model'; // asegúrate de tener este modelo creado
+import { Promocion } from '../../models/promocion.model';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogoService {
@@ -37,7 +37,7 @@ export class CatalogoService {
     return updateDoc(ref, data);
   }
 
-  // ✅ Tipos de Cliente como array
+  // Tipos de Cliente como array
   getTiposCliente(): Observable<string[]> {
     const ref = collection(this.firestore, 'tiposCliente');
     return collectionData(ref, { idField: 'id' }).pipe(
@@ -45,7 +45,7 @@ export class CatalogoService {
     );
   }
 
-  // 🔥 Promociones CRUD
+  // Promociones CRUD
   obtenerPromociones(): Observable<Promocion[]> {
     const ref = collection(this.firestore, 'promociones');
     return collectionData(ref, { idField: 'id' }) as Observable<Promocion[]>;

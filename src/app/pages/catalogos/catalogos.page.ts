@@ -77,7 +77,7 @@ export class CatalogosPage implements OnInit {
       nombre: item.nombre
     };
 
-    // ✅ Solo agrega el precio si está definido y es válido
+    // Solo agrega el precio si está definido y es válido
     if (typeof item.precio === 'number' && !isNaN(item.precio)) {
       nuevoItem.precio = item.precio;
     }
