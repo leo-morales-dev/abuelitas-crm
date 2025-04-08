@@ -10,7 +10,8 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-fidelizacion',
   standalone: true,
   imports: [CommonModule, NgFor, AsyncPipe, FormsModule],
-  templateUrl: './fidelizacion.page.html'
+  templateUrl: './fidelizacion.page.html',
+  styleUrls: ['./fidelizacion.page.css']
 })
 export class FidelizacionPage implements OnInit {
   private clienteService = inject(ClienteService);
@@ -42,10 +43,14 @@ export class FidelizacionPage implements OnInit {
   }
 
   opcionesCanje(tipo: string): string[] {
-    switch (tipo) {
-      case 'VIP': return ['Pizza familiar + bebida', '2 pizzas personales'];
-      case 'Premier': return ['Pizza mediana', '2 bebidas'];
-      default: return ['Pizza personal', 'Bebida'];
+    switch ((tipo || '').toLowerCase()) {
+      case 'vip':
+        return ['1 pizza familiar + bebida', '2 pizzas personales'];
+      case 'premier':
+        return ['1 pizza mediana', '2 bebidas'];
+      case 'tradicional':
+      default:
+        return ['1 pizza personal', '1 bebida'];
     }
   }
 
@@ -56,7 +61,7 @@ export class FidelizacionPage implements OnInit {
       this.clienteSeleccionado.id,
       this.recompensaSeleccionada
     ).then(() => {
-      alert('Recompensa aplicada exitosamente');
+      alert('🎉 Recompensa aplicada exitosamente');
       this.clienteSeleccionado = null;
     });
   }

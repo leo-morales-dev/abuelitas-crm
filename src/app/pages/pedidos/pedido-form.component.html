@@ -1,5 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="guardarPedido()" class="mt-4">
   <div class="row g-3">
+
     <!-- Cliente -->
     <div class="col-md-6">
       <select class="form-select" formControlName="clienteId" required>
@@ -106,8 +107,8 @@
     <!-- Fecha cierre visible solo si es Finalizado -->
     <div class="col-md-6" *ngIf="mostrarFechaCierre">
       <label class="form-label">Fecha de Cierre</label>
-      <input type="datetime-local" class="form-control" [value]="form.get('fechaCierre')?.value" disabled>
-    </div>
+      <input type="datetime-local" class="form-control" formControlName="fechaCierre" [attr.disabled]="true">
+    </div>    
   </div>
 
   <!-- Guardar -->

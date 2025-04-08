@@ -1,8 +1,8 @@
 <div class="container mt-4">
   <h2>Fidelización de Clientes</h2>
 
-  <table class="table table-bordered table-hover mt-4">
-    <thead>
+  <table class="table table-bordered table-hover mt-4 align-middle text-center">
+    <thead class="table-light">
       <tr>
         <th>Nombre</th>
         <th>Tipo</th>
@@ -16,9 +16,19 @@
     <tbody>
       <tr *ngFor="let cliente of clientes$ | async">
         <td>{{ cliente.nombre }}</td>
-        <td>{{ cliente.tipoCliente || 'No Aplica' }}</td>
-        <td>{{ cliente.puntos || 0 }}</td>
-        <td>{{ cliente.ultimaCompra | date:'shortDate' }}</td>
+        <td>
+          <span class="badge"
+                [ngClass]="{
+                  'bg-danger': cliente.tipoCliente === 'Premier',
+                  'bg-primary': cliente.tipoCliente === 'Tradicional',
+                  'bg-warning text-dark': cliente.tipoCliente === 'VIP',
+                  'bg-secondary': !cliente.tipoCliente
+                }">
+            {{ cliente.tipoCliente || 'No Aplica' }}
+          </span>
+        </td>
+        <td><strong>{{ cliente.puntos || 0 }}</strong></td>
+        <td>{{ cliente.ultimaCompra | date:'dd/MM/yyyy' }}</td>
         <td>
           <span [ngClass]="estaInactivo(cliente.ultimaCompra) ? 'text-danger' : 'text-success'">
             {{ estaInactivo(cliente.ultimaCompra) ? 'Inactivo' : 'Activo' }}
@@ -26,7 +36,7 @@
         </td>
         <td>{{ cliente.recompensa || 'Ninguna' }}</td>
         <td>
-          <button class="btn btn-sm btn-primary me-2"
+          <button class="btn btn-sm btn-azul me-2"
                   [disabled]="(cliente.puntos || 0) < 100"
                   (click)="aplicarRecompensa(cliente)">
             Automático
@@ -41,18 +51,24 @@
     </tbody>
   </table>
 
-  <div *ngIf="clienteSeleccionado" class="card p-4 mt-4 bg-light">
-    <h5>Canje de Recompensas para {{ clienteSeleccionado.nombre }}</h5>
+  <!-- Canje manual -->
+  <div *ngIf="clienteSeleccionado" class="card p-4 mt-4 bg-light border">
+    <h5>Canje manual para <strong>{{ clienteSeleccionado.nombre }}</strong></h5>
 
-    <div class="form-group mb-2">
-      <label>Selecciona recompensa:</label>
+    <div class="form-group mb-3">
+      <label class="form-label">Selecciona recompensa:</label>
       <select class="form-select" [(ngModel)]="recompensaSeleccionada">
+        <option value="" disabled selected>Seleccionar recompensa</option>
         <option *ngFor="let opcion of opcionesCanje(clienteSeleccionado.tipoCliente)" [value]="opcion">
           {{ opcion }}
         </option>
       </select>
     </div>
 
-    <button class="btn btn-primary mt-2" (click)="canjearRecompensa()">Confirmar canje</button>
+    <div class="text-end">
+      <button class="btn btn-azul" [disabled]="!recompensaSeleccionada" (click)="canjearRecompensa()">
+        Confirmar canje
+      </button>
+    </div>
   </div>
 </div>

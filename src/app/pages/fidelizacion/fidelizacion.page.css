@@ -1,13 +1,89 @@
-table th {
-    background-color: #f8f9fa;
-  }
-  
-  td, th {
-    vertical-align: middle !important;
-  }
-  
-  .btn[disabled] {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
+/* Estilos generales */
+h2 {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.table th {
+  background-color: #f8f9fa;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.badge {
+  font-size: 0.8rem;
+  padding: 0.4em 0.6em;
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+/* Colores personalizados para tipo de cliente */
+.bg-danger {
+  background-color: #dd1a1e !important;
+}
+
+.bg-primary {
+  background-color: #0065bc !important;
+}
+
+.bg-warning {
+  background-color: #ffcc00 !important;
+}
+
+.bg-secondary {
+  background-color: #6c757d !important;
+}
+
+/* Botón azul personalizado */
+.btn-azul {
+  background-color: #0065bc;
+  color: white;
+  border: none;
+}
+
+.btn-azul:hover,
+.btn-azul:focus {
+  background-color: #0056a3;
+  color: white;
+}
+
+/* Tarjeta de canje */
+.card {
+  border-radius: 0.5rem;
+  border: 1px solid #dee2e6;
+}
+
+.card h5 {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.form-select,
+.form-control {
+  border-radius: 0.5rem;
+}
+
+.text-success {
+  font-weight: 500;
+  color: #0065bc !important;
+}
+
+.text-danger {
+  font-weight: 500;
+  color: #dc3545 !important;
+}
+
+.btn-outline-success {
+  background-color: #dd1a1e;
+  color: white;
+  border-color: #dd1a1e;
+}

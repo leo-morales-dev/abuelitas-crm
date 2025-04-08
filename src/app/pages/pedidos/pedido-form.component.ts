@@ -146,7 +146,6 @@ export class PedidoFormComponent implements OnInit {
     const hoy = new Date();
     const dia = hoy.toLocaleDateString('es-MX', { weekday: 'long' }).toLowerCase();
 
-    // Verificamos si hay promoción aplicable
     const tipoEntregaSeleccionado = this.form.get('tipoEntrega')?.value;
 
     const promoActiva = this.promociones.find(promo => {
@@ -163,16 +162,8 @@ export class PedidoFormComponent implements OnInit {
         ? promo.tipoEntrega === tipoEntregaSeleccionado
         : true;
 
-      return (
-        desde <= hoy &&
-        hoy <= hasta &&
-        cumpleDia &&
-        cumpleCantidad &&
-        cumpleTipoPizza &&
-        cumpleEntrega
-      );
+      return desde <= hoy && hoy <= hasta && cumpleDia && cumpleCantidad && cumpleTipoPizza && cumpleEntrega;
     });
-
 
     let total = 0;
     this.promoAplicada = '';
@@ -204,7 +195,6 @@ export class PedidoFormComponent implements OnInit {
       }
     }
 
-    // Descuento por tipo de cliente
     if (this.tipoClienteActual === 'Premier') {
       total *= 0.95;
     } else if (this.tipoClienteActual === 'VIP') {
@@ -218,20 +208,14 @@ export class PedidoFormComponent implements OnInit {
   async guardarPedido() {
     const clienteId = this.form.get('clienteId')?.value;
     if (!clienteId || this.pizzasArray.length === 0) return;
-  
+
     const pedido: Pedido = this.form.getRawValue();
-  
-    await this.pedidoService.crearPedido(pedido);
-    await this.clienteService.agregarPuntos(
-      clienteId,
-      this.calcularPuntos(pedido.precioFinal, this.promoAplicada, pedido.fechaHora)
-    );
-  
-    // 🔁 Reset completo del formulario
+    await this.pedidoService.crearPedido(pedido); // ✅ fidelización ya se aplica aquí
+
     this.form.reset();
     this.pizzasArray.clear();
     this.pizzasArray.push(this.crearPizzaGroup());
-  
+
     this.form.patchValue({
       clienteId: '',
       fechaHora: this.getFechaActual(),
@@ -242,26 +226,21 @@ export class PedidoFormComponent implements OnInit {
       precioFinal: 0,
       fechaCierre: ''
     });
-  
-    // 🧽 Reset de validaciones y estado visual
+
     this.form.markAsPristine();
     this.form.markAsUntouched();
     this.form.updateValueAndValidity();
-  
-    // ✅ Reset de lógica de promo
     this.promoAplicada = '';
-  
-    // 👀 Opcional: enfocar el primer campo (cliente)
+
     setTimeout(() => {
       const clienteSelect = document.querySelector('[formcontrolname="clienteId"]') as HTMLElement;
       clienteSelect?.focus();
     }, 0);
   }
-  
 
   calcularPuntos(monto: number, promo: string, fecha: string): number {
     let puntos = Math.floor(monto / 100) * 20;
-    if (promo.includes('Combo')) puntos += Math.floor(puntos * 0.1);
+    if (promo.toLowerCase().includes('combo')) puntos += Math.floor(puntos * 0.1);
     const dia = new Date(fecha).getDay();
     if (dia === 1 || dia === 2) puntos *= 2;
     return puntos;
