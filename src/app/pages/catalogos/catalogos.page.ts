@@ -8,7 +8,8 @@ import { Promocion } from '../../models/promocion.model';
   selector: 'app-catalogos-page',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './catalogos.page.html'
+  templateUrl: './catalogos.page.html',
+  styleUrls: ['./catalogos.page.css'],
 })
 export class CatalogosPage implements OnInit {
   catalogoService = inject(CatalogoService);
@@ -19,7 +20,7 @@ export class CatalogosPage implements OnInit {
     { nombre: 'Especialidades', path: 'especialidades' },
     { nombre: 'Métodos de Pago', path: 'metodosPago' },
     { nombre: 'Tipos de Entrega', path: 'tiposEntrega' },
-    { nombre: 'Tipos de Cliente', path: 'tiposCliente' }
+    { nombre: 'Tipos de Membresía', path: 'tiposCliente' }
   ];
 
   datos: { [key: string]: any[] } = {};
@@ -37,7 +38,7 @@ export class CatalogosPage implements OnInit {
     diasValidos: [],
     tipoEntrega: '',
     condiciones: {
-      minimoPizzas: 0,
+      minimoPizzas: undefined,
       tipoPizzaAplicable: ''
     }
   };
@@ -75,6 +76,16 @@ export class CatalogosPage implements OnInit {
       this.nuevos[path] = { nombre: '', precio: undefined };
     }
   }
+
+  soloNumeros(event: KeyboardEvent) {
+    const charCode = event.key;
+  
+    // Solo permite dígitos (0-9)
+    if (!/^\d$/.test(charCode)) {
+      event.preventDefault();
+    }
+  }
+  
 
   async eliminar(path: string, id: string) {
     if (confirm('¿Eliminar este ítem?')) {

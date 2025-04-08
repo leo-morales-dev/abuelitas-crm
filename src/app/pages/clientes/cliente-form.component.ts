@@ -20,7 +20,7 @@ import { NgIf, NgFor } from '@angular/common';
 @Component({
   selector: 'app-cliente-form',
   templateUrl: './cliente-form.component.html',
-  styleUrls: ['./cliente-form.component.css'],  // ✅ Agrega esta línea
+  styleUrls: ['./cliente-form.component.css'],
   standalone: true,
   imports: [ReactiveFormsModule, NgIf, NgFor],
 })

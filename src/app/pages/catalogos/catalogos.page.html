@@ -1,151 +1,140 @@
-<div class="container mt-4">
-  <h2>Catálogos</h2>
+<div class="container my-4">
+  <h2 class="mb-4">Catálogos</h2>
 
   <div *ngFor="let c of categorias" class="mb-5">
-    <h4>{{ c.nombre }}</h4>
+    <h4 class="mb-3">{{ c.nombre }}</h4>
 
     <!-- Agregar nuevo -->
-    <div class="input-group mb-3">
-      <input type="text" class="form-control" placeholder="Nuevo ítem"
-             [(ngModel)]="nuevos[c.path].nombre">
-
-      <input *ngIf="c.usaPrecio" type="number" class="form-control"
-             placeholder="Precio" [(ngModel)]="nuevos[c.path].precio">
-
-      <button class="btn btn-primary" type="button" (click)="agregar(c.path)">Agregar</button>
-    </div>
-
-    <!-- Tabla -->
-    <table class="table table-bordered table-sm">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th *ngIf="c.usaPrecio">Precio</th>
-          <th class="text-end">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of datos[c.path]">
-          <td>
-            <div *ngIf="!editando[c.path][item.id]; else editNombre">
-              {{ item.nombre }}
-            </div>
-            <ng-template #editNombre>
-              <input [(ngModel)]="item.nombre" class="form-control form-control-sm">
-            </ng-template>
-          </td>
-
-          <td *ngIf="c.usaPrecio">
-            <div *ngIf="!editando[c.path][item.id]; else editPrecio">
-              {{ item.precio | currency }}
-            </div>
-            <ng-template #editPrecio>
-              <input [(ngModel)]="item.precio" type="number" class="form-control form-control-sm">
-            </ng-template>
-          </td>
-
-          <td class="text-end">
-            <div *ngIf="!editando[c.path][item.id]; else accionesEdit">
-              <button class="btn btn-sm btn-warning me-1" (click)="editar(c.path, item.id)">Editar</button>
-              <button class="btn btn-sm btn-danger" (click)="eliminar(c.path, item.id)">Eliminar</button>
-            </div>
-            <ng-template #accionesEdit>
-              <button class="btn btn-sm btn-success me-1" (click)="guardar(c.path, item)">Guardar</button>
-              <button class="btn btn-sm btn-secondary" (click)="cancelar(c.path, item.id)">Cancelar</button>
-            </ng-template>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Sección especial para promociones -->
-  <div class="mb-5">
-    <h4>Promociones</h4>
-
-    <!-- Agregar promoción -->
-    <div class="card p-3 mb-4 bg-light">
-      <div class="row g-2 align-items-center">
-        <div class="col-md-3">
-          <input class="form-control" placeholder="Nombre promoción" [(ngModel)]="nuevaPromocion.nombre">
-        </div>
-
-        <div class="col-md-2">
-          <input class="form-control" type="number" placeholder="Precio fijo" [(ngModel)]="nuevaPromocion.precio">
-        </div>
-
-        <div class="col-md-2">
-          <input type="date" class="form-control" [(ngModel)]="nuevaPromocion.fechaInicio">
-        </div>
-
-        <div class="col-md-2">
-          <input type="date" class="form-control" [(ngModel)]="nuevaPromocion.fechaFin">
-        </div>
-
-        <div class="col-md-1">
-          <input type="number" class="form-control" placeholder="Mín. pizzas" [(ngModel)]="nuevaPromocion.condiciones.minimoPizzas">
-        </div>
-
-        <div class="col-md-2">
-          <select class="form-select" [(ngModel)]="nuevaPromocion.condiciones.tipoPizzaAplicable">
-            <option value="">Tipo de pizza</option>
-            <option *ngFor="let tipo of datos['tiposPizza']" [value]="tipo.nombre">{{ tipo.nombre }}</option>
-          </select>
-        </div>
-
-        <div class="col-md-2">
-          <select class="form-select" [(ngModel)]="nuevaPromocion.tipoEntrega">
-            <option value="">Tipo de entrega</option>
-            <option *ngFor="let tipo of datos['tiposEntrega']" [value]="tipo.nombre">{{ tipo.nombre }}</option>
-          </select>
-        </div>
-
-        <div class="col-12">
-          <label class="form-label mb-1 mt-2">Días válidos</label>
-          <div class="form-check form-check-inline" *ngFor="let dia of diasSemana">
-            <input type="checkbox" class="form-check-input"
-                   [checked]="nuevaPromocion.diasValidos.includes(dia)"
-                   (change)="toggleDia(dia)">
-            <label class="form-check-label">{{ dia }}</label>
-          </div>
-        </div>
-
-        <div class="col-12 text-end">
-          <button class="btn btn-primary mt-2" (click)="agregarPromocion()">Agregar Promoción</button>
-        </div>
+    <div class="row g-2 align-items-center mb-3">
+      <div class="col-md-4">
+        <input type="text" class="form-control" placeholder="Nuevo ítem" [(ngModel)]="nuevos[c.path].nombre">
+      </div>
+      <div class="col-md-3" *ngIf="c.usaPrecio">
+        <input type="number" class="form-control" placeholder="Precio" [(ngModel)]="nuevos[c.path].precio">
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100" (click)="agregar(c.path)">
+          <i class="bi bi-plus-circle"></i> Agregar
+        </button>
       </div>
     </div>
 
-    <!-- Tabla de promociones -->
-    <table class="table table-bordered table-sm">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Precio</th>
-          <th>Inicio</th>
-          <th>Fin</th>
-          <th>Días</th>
-          <th>Tipo Entrega</th>
-          <th>Mín. Pizzas</th>
-          <th>Tipo Pizza</th>
-          <th class="text-end">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let promo of promociones">
-          <td>{{ promo.nombre }}</td>
-          <td>{{ promo.precio | currency }}</td>
-          <td>{{ promo.fechaInicio | date }}</td>
-          <td>{{ promo.fechaFin | date }}</td>
-          <td>{{ promo.diasValidos.join(', ') }}</td>
-          <td>{{ promo.tipoEntrega || '-' }}</td>
-          <td>{{ promo.condiciones.minimoPizzas || '-' }}</td>
-          <td>{{ promo.condiciones.tipoPizzaAplicable || '-' }}</td>
-          <td class="text-end">
-            <button class="btn btn-sm btn-danger" (click)="eliminarPromocion(promo.id)">Eliminar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Lista en cards -->
+    <div class="row g-3">
+      <div class="col-md-4 col-sm-6" *ngFor="let item of datos[c.path]">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <ng-container *ngIf="!editando[c.path][item.id]; else modoEdicion">
+              <h5 class="card-title mb-2">{{ item.nombre }}</h5>
+              <p *ngIf="c.usaPrecio" class="text-muted">{{ item.precio | currency:'MXN' }}</p>
+              <div class="d-flex justify-content-between mt-3">
+                <button class="btn btn-sm btn-warning text-white" (click)="editar(c.path, item.id)">
+                  <i class="bi bi-pencil-fill"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="eliminar(c.path, item.id)">
+                  <i class="bi bi-trash-fill"></i>
+                </button>
+              </div>
+            </ng-container>
+
+            <ng-template #modoEdicion>
+              <input [(ngModel)]="item.nombre" class="form-control mb-2">
+              <input *ngIf="c.usaPrecio" [(ngModel)]="item.precio" type="number" class="form-control mb-2">
+              <div class="d-flex justify-content-between">
+                <button class="btn btn-sm btn-success" (click)="guardar(c.path, item)">
+                  <i class="bi bi-check-circle"></i>
+                </button>
+                <button class="btn btn-sm btn-secondary" (click)="cancelar(c.path, item.id)">
+                  Cancelar
+                </button>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROMOCIONES -->
+  <div class="my-5">
+    <h4 class="mb-3">Promociones</h4>
+
+    <div class="row g-2 align-items-center mb-3">
+      <div class="col-md-3">
+        <input class="form-control" placeholder="Nombre promoción" [(ngModel)]="nuevaPromocion.nombre">
+      </div>
+      <div class="col-md-2">
+        <input type="number" class="form-control" placeholder="Precio fijo" [(ngModel)]="nuevaPromocion.precio">
+      </div>
+      <div class="col-md-2">
+        <input type="date" class="form-control" [(ngModel)]="nuevaPromocion.fechaInicio">
+      </div>
+      <div class="col-md-2">
+        <input type="date" class="form-control" [(ngModel)]="nuevaPromocion.fechaFin">
+      </div>
+      <div class="col-md-2">
+        <select class="form-select" [(ngModel)]="nuevaPromocion.tipoEntrega">
+          <option value="" disabled hidden>Tipo de entrega</option>
+          <option *ngFor="let tipo of datos['tiposEntrega']" [value]="tipo.nombre">{{ tipo.nombre }}</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <input
+          type="number"
+          class="form-control"
+          placeholder="Mín. pizzas"
+          [(ngModel)]="nuevaPromocion.condiciones.minimoPizzas"
+          min="1"
+          step="1"
+          (keypress)="soloNumeros($event)">
+      </div>      
+      <div class="col-md-3">
+        <select class="form-select" [(ngModel)]="nuevaPromocion.condiciones.tipoPizzaAplicable">
+          <option value="" disabled hidden>Tipo de pizza</option>
+          <option *ngFor="let tipo of datos['tiposPizza']" [value]="tipo.nombre">{{ tipo.nombre }}</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Días válidos</label><br />
+        <div class="form-check form-check-inline" *ngFor="let dia of diasSemana">
+          <input type="checkbox" class="form-check-input"
+                 [checked]="nuevaPromocion.diasValidos.includes(dia)"
+                 (change)="toggleDia(dia)">
+          <label class="form-check-label">{{ dia }}</label>
+        </div>
+      </div>
+      <div class="col-12 text-end">
+        <button class="btn btn-primary mt-2" (click)="agregarPromocion()">
+          <i class="bi bi-gift"></i> Agregar promoción
+        </button>
+      </div>
+    </div>
+
+    <!-- Cards de promociones -->
+    <div class="mt-4 row g-3">
+      <div class="col-md-4" *ngFor="let promo of promociones">
+        <div class="card shadow-sm border-primary">
+          <div class="card-body">
+            <h5 class="card-title">{{ promo.nombre }}</h5>
+            <p class="mb-1"><strong>Precio:</strong> {{ promo.precio | currency:'MXN $':'code':'1.2-2':'es-MX' }}</p>
+            <p class="mb-1">
+              <strong>Válido:</strong>
+              {{ promo.fechaInicio | date:'d \'de\' MMMM \'de\' y':'':'es-MX' }}
+              -
+              {{ promo.fechaFin | date:'d \'de\' MMMM \'de\' y':'':'es-MX' }}
+            </p>
+            <p class="mb-1"><strong>Días:</strong> {{ promo.diasValidos.join(', ') }}</p>
+            <p class="mb-1"><strong>Entrega:</strong> {{ promo.tipoEntrega || '-' }}</p>
+            <p class="mb-1"><strong>Mín. Pizzas:</strong> {{ promo.condiciones.minimoPizzas || '-' }}</p>
+            <p class="mb-2"><strong>Tipo pizza:</strong> {{ promo.condiciones.tipoPizzaAplicable || '-' }}</p>
+            <div class="text-end">
+              <button class="btn btn-sm btn-danger" (click)="eliminarPromocion(promo.id)">
+                <i class="bi bi-trash-fill"></i> Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

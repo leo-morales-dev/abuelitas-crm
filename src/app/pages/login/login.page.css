@@ -1,48 +1,45 @@
 body {
-    background-color: #f0f0f0 !important;
-  }
+  background-color: #f8f9fa;
+}
 
-  .bienvenida {
-    font-size: 20px; /* Cambia el tamaño como gustes */
-    color: #333;      /* También puedes cambiar el color si lo deseas */
-    margin-bottom: 1rem;
-  }
-  
-  
-  .login-container {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #dcdcdc;
-    padding: 2rem;
-  }
-  
-  .login-content {
-    background-color: white;
-    border-radius: 12px;
-    display: flex;
-    overflow: hidden;
-    width: 850px;
-    max-width: 100%;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  }
-  
-  .login-image {
-    width: 48%;
-    background: url('../../../assets/img/pizza.jpg') no-repeat center center;
-    background-size: cover;
-  }
-  
-  .login-form-wrapper {
-    width: 50%;
-    padding: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .login-form {
-    width: 100%;
-  }
-  
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: #eaeaea;
+}
+
+.login-box {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 3rem;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.08);
+}
+
+.logo-img {
+  width: 80px;
+  height: auto;
+}
+
+.crm-title {
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-bottom: 0.3rem;
+  color: #0065bc;
+}
+
+.bienvenida {
+  color: #555;
+  font-size: 1rem;
+}
+
+.icon-red {
+  background-color: #dd1a1e;
+  color: white;
+  border: none;
+  border-radius: 0.375rem 0 0 0.375rem;
+}

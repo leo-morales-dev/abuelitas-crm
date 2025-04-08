@@ -1,0 +1,106 @@
+/* Contenedor principal */
+.catalogo-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  /* Tarjeta individual */
+  .catalogo-card {
+    flex: 1 1 300px;
+    background-color: #f8f9fa;
+    border: 2px solid #0065bc; /* ✅ Azul principal */
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Título de la tarjeta */
+  .catalogo-card h5 {
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Botón azul principal */
+  .btn-azul,
+  .btn-primary {
+    background-color: #0065bc;
+    color: #fff;
+    border: none;
+  }
+  
+  .btn-azul:hover,
+  .btn-primary:hover {
+    background-color: #004c99;
+  }
+  
+  /* Botón de eliminar rojo */
+  .btn-rojo,
+  .btn-danger {
+    background-color: #dd1a1e;
+    color: white;
+    border: none;
+  }
+  
+  .btn-rojo:hover,
+  .btn-danger:hover {
+    background-color: #b31315;
+  }
+  
+  /* Botón de edición amarillo */
+  .btn-amarillo,
+  .btn-warning {
+    background-color: #ffc107;
+    color: #212529;
+    border: none;
+  }
+  
+  .btn-amarillo:hover,
+  .btn-warning:hover {
+    background-color: #e0a800;
+  }
+  
+  /* Inputs */
+  input.form-control,
+  select.form-select {
+    border-radius: 0.4rem;
+  }
+  
+  /* Lista de items del catálogo */
+  .catalogo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 0.4rem;
+  }
+  
+  /* Espacio entre botones de acción */
+  .catalogo-item button {
+    margin-left: 0.5rem;
+  }
+  
+  /* Cards de promociones */
+  .card.border-primary {
+    border: 2px solid #0065bc !important;
+  }
+  
+  /* Efecto de levantar las cards al hacer hover */
+.card:hover {
+    transform: translateY(-5px);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  /* Asegura suavidad en las animaciones */
+  .card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+  
