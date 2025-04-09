@@ -59,6 +59,17 @@ export class PedidoFormComponent implements OnInit {
       fechaCierre: ['']
     });
 
+    const primeraPizza = this.pizzasArray.at(0);
+    primeraPizza.get('especialidad')?.valueChanges.subscribe(especialidad => {
+      const ingredientesCtrl = primeraPizza.get('ingredientes');
+      if (especialidad && especialidad !== '__ninguna__') {
+        ingredientesCtrl?.disable();
+      } else {
+        ingredientesCtrl?.enable();
+      }
+    });
+
+
     this.form.get('estado')?.valueChanges.subscribe(estado => {
       const control = this.form.get('fechaCierre');
       if (estado === 'Finalizado') {
@@ -124,8 +135,18 @@ export class PedidoFormComponent implements OnInit {
   }
 
   agregarPizza() {
-    this.pizzasArray.push(this.crearPizzaGroup());
+    const nueva = this.crearPizzaGroup();
+    this.pizzasArray.push(nueva);
+    nueva.get('especialidad')?.valueChanges.subscribe(especialidad => {
+      const ingredientesCtrl = nueva.get('ingredientes');
+      if (especialidad && especialidad !== '__ninguna__') {
+        ingredientesCtrl?.disable();
+      } else {
+        ingredientesCtrl?.enable();
+      }
+    });
   }
+  
 
   eliminarPizza(i: number) {
     this.pizzasArray.removeAt(i);
@@ -145,7 +166,6 @@ export class PedidoFormComponent implements OnInit {
 
     const hoy = new Date();
     const dia = hoy.toLocaleDateString('es-MX', { weekday: 'long' }).toLowerCase();
-
     const tipoEntregaSeleccionado = this.form.get('tipoEntrega')?.value;
 
     const promoActiva = this.promociones.find(promo => {
@@ -179,7 +199,6 @@ export class PedidoFormComponent implements OnInit {
       const resto = pizzasPromo.length % minPizzas;
 
       total += grupos * promoActiva.precio;
-
       for (let i = 0; i < resto; i++) {
         total += this.preciosCatalogo[tipoPromo] || 0;
       }

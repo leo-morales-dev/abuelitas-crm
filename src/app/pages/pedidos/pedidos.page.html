@@ -29,7 +29,9 @@
             <li *ngFor="let pizza of p.pizzas" class="mb-1">
               <strong>{{ pizza.tipo }}</strong>
               <span *ngIf="pizza.especialidad">({{ pizza.especialidad }})</span><br>
-              <small class="text-muted">Ingredientes: {{ pizza.ingredientes?.join(', ') || 'N/A' }}</small>
+              <small *ngIf="!pizza.especialidad" class="text-muted">
+                Ingredientes: {{ pizza.ingredientes?.join(', ') || 'N/A' }}
+              </small>              
             </li>
           </ul>
         </td>

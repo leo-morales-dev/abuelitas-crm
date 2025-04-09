@@ -45,12 +45,14 @@
           <div class="col-md-3">
             <div class="input-group">
               <select class="form-select" formControlName="especialidad">
-                <option value="">Especialidad (opcional)</option>
+                <option disabled hidden value="">Especialidad (opcional)</option>
+                <option value="__ninguna__">Sin especialidad</option>
                 <option *ngFor="let esp of especialidadesDisponibles" [value]="esp">{{ esp }}</option>
               </select>
               <button class="btn btn-azul" type="button" (click)="agregarEspecialidad()">+</button>
             </div>
           </div>
+
 
           <!-- Eliminar -->
           <div class="col-md-1 d-flex align-items-center">
